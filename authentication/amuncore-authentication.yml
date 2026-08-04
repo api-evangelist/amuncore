@@ -1,0 +1,29 @@
+generated: '2026-08-03'
+method: searched
+status: published
+source: https://amuncore.com
+description: Bearer API keys in the Authorization header, plus a separate MCP-Token
+  header for the MCP surface.
+verified: '2026-08-03'
+schemes:
+- id: bearer
+  type: http
+  scheme: bearer
+  header: Authorization
+  example: 'Authorization: Bearer ak_live_…'
+  note: Shown on the homepage live-request demo.
+- id: mcp-token
+  type: apiKey
+  in: header
+  name: MCP-Token
+  note: Required by the MCP endpoint; confirmed by its 401 error message.
+signup:
+  url: https://amuncore.com
+  free_plan: true
+  note: '"Create free account" / "Free plan forever" per the homepage.'
+evidence:
+- url: https://amuncore.com
+  status: 200
+- url: https://amuncore.com/mcp
+  status: 401
+  method: POST
