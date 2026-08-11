@@ -1,0 +1,101 @@
+generated: '2026-08-10'
+method: probed
+source: >-
+  Unauthenticated registry metadata endpoints (registry.npmjs.org, pypi.org,
+  rubygems.org, packagist.org, api.nuget.org, proxy.golang.org,
+  search.maven.org) plus https://amuncore.com/ and https://amuncore.com/llms.txt
+description: >-
+  AmunCore publishes no client libraries in any public package registry. This is a
+  recorded absence, not an unchecked one — eleven registry lookups and an npm
+  full-text search were run on 2026-08-10 and every one missed. The gap is by
+  design rather than neglect: AmunCore's developer story is generated code
+  SNIPPETS per endpoint (cURL, JavaScript, Python, C#, PHP, Go) exported from the
+  dashboard, not a versioned SDK. That is a defensible choice for a platform whose
+  endpoints differ per tenant, but it means there is nothing to pin, nothing to
+  version, and no dated release signal for a consumer to read.
+packages: []
+package_count: 0
+official_sdk_count: 0
+distribution_model: generated-snippets
+snippet_languages: [curl, javascript, python, csharp, php, go]
+snippet_note: >-
+  "One-click code export — copy a working request in cURL, JavaScript, Python, C#,
+  PHP, or Go" plus a Postman collection and OpenAPI export, all generated per
+  endpoint inside the dashboard. Not distributed, not versioned, no registry
+  presence, and no CDN build either.
+registry_probes:
+- registry: npm
+  query: amuncore
+  url: https://registry.npmjs.org/amuncore
+  status: 404
+  version: null
+- registry: npm
+  query: '@amuncore/sdk'
+  status: 404
+  version: null
+- registry: npm
+  query: amuncore-mcp
+  status: 404
+  version: null
+- registry: npm
+  query: '@hynoworld/amuncore'
+  status: 404
+  version: null
+- registry: npm
+  query: full-text search "amuncore"
+  url: https://registry.npmjs.org/-/v1/search?text=amuncore
+  status: 200
+  results: 0
+  version: null
+- registry: pypi
+  query: amuncore
+  url: https://pypi.org/pypi/amuncore/json
+  status: 404
+  version: null
+- registry: pypi
+  query: amuncore-sdk
+  status: 404
+  version: null
+- registry: rubygems
+  query: amuncore
+  status: 404
+  version: null
+- registry: packagist
+  query: amuncore/amuncore
+  status: 404
+  version: null
+- registry: nuget
+  query: amuncore
+  status: 404
+  version: null
+  note: >-
+    Notable miss — the platform runs on ASP.NET (Microsoft-IIS/10.0,
+    X-Powered-By: ASP.NET) and the pricing page leads with SQL Server, so a NuGet
+    client would be the natural first SDK for its likeliest audience.
+- registry: nuget
+  query: amuncore.client
+  status: 404
+  version: null
+- registry: go
+  query: github.com/amuncore/amuncore
+  url: https://proxy.golang.org/github.com/amuncore/amuncore/@v/list
+  status: 404
+  version: null
+- registry: maven
+  query: amuncore
+  status: 200
+  results: 0
+  version: null
+source_code:
+  github_org: null
+  note: >-
+    No AmunCore or HYNOWorld GitHub organization was found; a GitHub code search
+    for "amuncore" returns only this API Evangelist profile repository. AmunCore is
+    a closed-source commercial product of HYNOWorld.
+gaps:
+- No official SDK in any registry, so no `SDKs` pointer is emitted — the ergonomics
+  sdk_count checks correctly score zero here rather than being credited from a
+  snippet generator.
+- No dated release signal exists for this provider at all. There is no changelog,
+  no status page and no published package, so nothing about AmunCore's software
+  carries a public version-and-date pair a consumer could use to judge currency.

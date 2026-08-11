@@ -1,29 +1,100 @@
-generated: '2026-08-03'
+generated: '2026-08-10'
 method: searched
 status: published
-source: https://amuncore.com
-description: Bearer API keys in the Authorization header, plus a separate MCP-Token
-  header for the MCP surface.
-verified: '2026-08-03'
+source: >-
+  https://amuncore.com/openapi.json, https://amuncore.com/llms.txt,
+  https://amuncore.com/security.html, https://amuncore.com/.well-known/oauth-authorization-server
+docs: https://amuncore.com/llms.txt
+description: >-
+  AmunCore authenticates three channels differently, and the provider is explicit
+  about the separation. The generated REST API takes a per-application API key in
+  an X-Api-Key header. The MCP endpoint takes a distinct secret (MCP-Token
+  header) or an OAuth 2.0 bearer token with the "mcp" scope, deliberately not the
+  same credential as the REST keys. Dashboard sign-in is separate again, with
+  optional TOTP two-factor.
+verified: '2026-08-10'
+summary:
+  types: [apiKey, oauth2]
+  api_key_in: [header]
+  api_key_names: [X-Api-Key, MCP-Token]
+  oauth2_flows: [authorizationCode]
+  oauth2_applies_to: [mcp]
 schemes:
-- id: bearer
-  type: http
-  scheme: bearer
-  header: Authorization
-  example: 'Authorization: Bearer ak_live_…'
-  note: Shown on the homepage live-request demo.
-- id: mcp-token
+- id: ApiKeyAuth
+  name: ApiKeyAuth
   type: apiKey
   in: header
+  header: X-Api-Key
+  applies_to: REST API (/api/v1/{appId}/{endpointName})
+  source: https://amuncore.com/openapi.json
+  description: >-
+    The application's API key, sent on every request. A missing or invalid key
+    returns 401 with {"success":false,"message":"Application '<appId>' not found
+    or API key does not match."} — the same message for an unknown application and
+    a wrong key, so the API does not leak whether an appId exists.
+  key_properties:
+    scoping: Per application, and issuable read-only or read-write per consumer.
+    storage: Keys are hashed; the raw value is shown once at issue time.
+    rotation: Rotatable from the dashboard and via the regenerate_api_key MCP tool.
+    ip_allowlist: Optional IP allowlisting per application.
+- id: mcp-token
   name: MCP-Token
-  note: Required by the MCP endpoint; confirmed by its 401 error message.
+  type: apiKey
+  in: header
+  header: MCP-Token
+  applies_to: MCP endpoint (https://amuncore.com/mcp)
+  source: https://amuncore.com/mcp
+  description: >-
+    A secret distinct from the REST API keys, scoped to a single company and
+    disableable per company. Confirmed live: an unauthenticated JSON-RPC POST
+    returns -32001 "Unauthorized: missing MCP-Token header".
+- id: mcp-oauth
+  name: OAuth 2.0 (MCP)
+  type: oauth2
+  applies_to: MCP endpoint (https://amuncore.com/mcp)
+  source: https://amuncore.com/.well-known/oauth-authorization-server
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://amuncore.com/oauth/authorize
+    tokenUrl: https://amuncore.com/oauth/token
+    scopes:
+      mcp: Access the AmunCore MCP endpoint.
+    pkce: S256
+  grant_types: [authorization_code, refresh_token]
+  registration_endpoint: https://amuncore.com/oauth/register
+  token_endpoint_auth_methods: [none, client_secret_post]
+  detail: scopes/amuncore-scopes.yml
+account_security:
+  two_factor: Optional TOTP 2FA on dashboard sign-in, with one-time recovery codes and administrator reset.
+  password_storage: BCrypt hashes.
+  secret_storage: Database connection strings and 2FA secrets encrypted at rest with AES-256.
+  roles: [SuperAdmin, Admin, Developer, Viewer]
+  tenant_isolation: Strict per-company separation enforced on every request.
+  source: https://amuncore.com/security.html
 signup:
-  url: https://amuncore.com
+  url: https://amuncore.com/Register
+  login: https://amuncore.com/Auth/Login
   free_plan: true
-  note: '"Create free account" / "Free plan forever" per the homepage.'
+  note: '"Free plan forever" per the homepage pricing table; no card required to begin.'
+gaps:
+- No OpenID Connect. /.well-known/openid-configuration returns 404, so the OAuth
+  layer carries no identity token for the acting agent.
+- No SSO. The provider's own security page lists OAuth2/SAML single sign-on as
+  roadmap, not shipped.
+- The X-Api-Key parameter is declared on each operation with required omitted, so
+  a strict reader of the spec cannot tell the key is mandatory from the parameter
+  alone — only the securitySchemes block and the prose say so.
 evidence:
-- url: https://amuncore.com
+- url: https://amuncore.com/openapi.json
   status: 200
+- url: https://amuncore.com/api/v1/demo/customers
+  status: 404
+  method: GET
+  note: Unauthenticated call returned the real JSON auth-failure envelope, not HTML.
 - url: https://amuncore.com/mcp
   status: 401
   method: POST
+- url: https://amuncore.com/.well-known/oauth-authorization-server
+  status: 200
+- url: https://amuncore.com/security.html
+  status: 200

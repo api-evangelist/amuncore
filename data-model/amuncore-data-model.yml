@@ -1,0 +1,137 @@
+generated: '2026-08-10'
+method: derived
+source: >-
+  openapi/amuncore-dynamic-api-openapi.yml (path parameters and response
+  envelopes) and mcp/amuncore-mcp.yml (the twelve tool names published in
+  https://amuncore.com/llms.txt)
+description: >-
+  AmunCore's data model has to be read in two layers, and conflating them is the
+  main way to get this provider wrong. The CONTROL model — Company, Application,
+  Endpoint, ApiKey, AuditLog — is fixed, and it is the model the MCP tools operate
+  on. The DATA model is not AmunCore's at all: it is whatever tables the customer
+  connected, reached through an opaque {endpointName} segment. The public OpenAPI
+  declares components.schemas as empty precisely because the record shape is
+  unknowable until a tenant configures it.
+layers:
+- layer: control
+  described_by: MCP tool names and the platform's own documentation
+  contract: none published (no REST operations for these entities)
+- layer: data
+  described_by: openapi/amuncore-dynamic-api-openapi.yml
+  contract: >-
+    Five generic CRUD operations; the record schema is per tenant and is not
+    expressible in the platform spec.
+entities:
+- name: Company
+  layer: control
+  description: >-
+    The tenancy boundary. Every application, endpoint, user and key belongs to
+    exactly one company, and isolation is enforced on every request. One MCP
+    configuration exists per company.
+  evidence: https://amuncore.com/security.html; llms.txt "scoped to the company that owns the key"
+- name: Application
+  layer: control
+  identifier: appId
+  identifier_type: string (appears in the URL path, e.g. "myapp" / "shop")
+  description: >-
+    A named grouping of endpoints over one connected database. Carries its own API
+    key and appears as the first path segment of every generated route.
+  operations: [list_applications, get_application, create_application]
+- name: DatabaseConnection
+  layer: control
+  description: >-
+    The connection string and engine for the customer's database. Encrypted at rest
+    with AES-256 and never displayed in plain text. Supported engines are SQL
+    Server, MySQL, MariaDB, PostgreSQL, Oracle and SQLite.
+  evidence: https://amuncore.com/security.html
+- name: Endpoint
+  layer: control
+  identifier: endpointName
+  identifier_type: string (second path segment)
+  description: >-
+    A configured projection over a table, view, join or stored procedure — the
+    selected columns, filters and allowed verbs. Can be enabled or disabled.
+  operations: [list_endpoints, create_endpoint, toggle_endpoint]
+- name: ApiKey
+  layer: control
+  description: >-
+    Per-application credential, issuable read-only or read-write per consumer,
+    stored hashed and revealed once at issue.
+  operations: [regenerate_api_key]
+- name: AuditLogEntry
+  layer: control
+  fields: [method, path, status_code, response_time, source_ip]
+  description: One row per API request, and per MCP tool call. Also records webhook delivery attempts.
+  operations: [get_audit_logs]
+- name: License
+  layer: control
+  description: The account's plan and limits — applications, endpoints and call quota.
+  operations: [get_license_status, check_plan_limits]
+  related_artifact: plans/amuncore-plans-pricing.yml
+- name: Record
+  layer: data
+  identifier: id
+  identifier_type: >-
+    Whatever the underlying table's key is; the spec types the {id} path parameter
+    as a string and the examples show integers.
+  description: >-
+    A single row of the customer's own table, returned as an open JSON object.
+    Field names are the customer's column names. This entity has no schema in the
+    platform contract by design.
+  operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+relationships:
+- from: Company
+  to: Application
+  type: has_many
+  via: tenancy
+- from: Company
+  to: AuditLogEntry
+  type: has_many
+  via: tenancy
+- from: Company
+  to: License
+  type: has_one
+  via: tenancy
+- from: Application
+  to: DatabaseConnection
+  type: has_one
+  via: connection string configured on the application
+- from: Application
+  to: Endpoint
+  type: has_many
+  via: appId
+- from: Application
+  to: ApiKey
+  type: has_many
+  via: appId
+- from: Endpoint
+  to: Record
+  type: has_many
+  via: 'the generated route /api/v1/{appId}/{endpointName}'
+- from: Record
+  to: Endpoint
+  type: belongs_to
+  via: endpointName
+id_conventions:
+  application: >-
+    appId is a human-chosen slug, not an opaque prefixed identifier — "myapp" and
+    "shop" appear in the provider's own examples. It is therefore guessable, which
+    is why an unauthenticated call returns a deliberately ambiguous
+    "not found or API key does not match" for both a wrong appId and a wrong key.
+  record: No AmunCore-issued identifier; the primary key belongs to the customer's table.
+  request: 'requestId in error bodies is prefixed, e.g. req_9f2c1a7b.'
+  api_key: 'Keys shown in the homepage demo carry an ak_live_ prefix.'
+gaps:
+- components.schemas is empty in the published OpenAPI, so there is no schema for
+  the response envelope, the error envelope or any record type — an agent cannot
+  validate a payload against the contract.
+- The control-plane entities above are reconstructed from MCP tool names and the
+  security page. No REST contract, schema or object reference is published for
+  them, so field-level detail is unavailable.
+- Stored-procedure endpoints (including output parameters) are advertised as a
+  feature but do not appear in the published spec at all.

@@ -1,0 +1,27 @@
+generated: '2026-08-10'
+method: generated
+source: >-
+  Packaged Agent Skills generated from AmunCore's public OpenAPI
+  (https://amuncore.com/openapi.json) and its published MCP tool list
+  (https://amuncore.com/llms.txt). Every REST step is grounded in an operationId
+  verified verbatim in ../openapi/amuncore-dynamic-api-openapi.yml, and every MCP
+  step in a tool name quoted verbatim from llms.txt. Cross-cutting rules cite
+  ../conventions/, ../errors/, ../authentication/, ../rate-limits/ and ../sandbox/.
+note: >-
+  AmunCore has no marquee business flows to package the way a payments or comms
+  API does — its API is generated per tenant, so a skill cannot name a resource.
+  These three skills therefore cover the three things that ARE stable across every
+  tenant: reading, writing, and provisioning.
+skills:
+- file: amuncore-query-a-table.md
+  name: Query a table through an AmunCore endpoint
+  api: openapi/amuncore-dynamic-api-openapi.yml
+  operations: [DynamicApi_GetList, DynamicApi_GetById]
+- file: amuncore-write-a-record.md
+  name: Create, update and delete a record safely
+  api: openapi/amuncore-dynamic-api-openapi.yml
+  operations: [DynamicApi_Post, DynamicApi_Put, DynamicApi_Delete, DynamicApi_GetById]
+- file: amuncore-expose-a-table-over-mcp.md
+  name: Expose a database table as an API over MCP
+  api: mcp/amuncore-mcp.yml
+  operations: [create_application, create_endpoint, toggle_endpoint, list_endpoints, regenerate_api_key, call_api]

@@ -1,0 +1,100 @@
+# AmunCore
+
+> AmunCore is a no-code platform that turns any database into a secure REST API in minutes. Connect a database, choose the tables and columns to expose, generate an API key, and get a production-ready REST API with no backend code to write or maintain. AmunCore is also MCP-native, so the same endpoints become tools that AI assistants can call under your own keys, permissions, and audit trail.
+
+AmunCore is a commercial product by HYNOWorld. It is designed for teams that already have data in a database and need a clean, secure API in front of it without building and maintaining a backend project.
+
+## What AmunCore does
+
+- Turns an existing database into a REST API without writing backend code.
+- Lets you configure endpoints visually: pick tables, choose columns, add joins and filters, and combine columns, with a live SQL preview.
+- Generates production-ready endpoints with pagination, filtering, sorting, and per-endpoint API-key authentication.
+- Produces auto-generated, shareable API documentation and copy-paste client code in multiple languages (cURL, JavaScript, Python, C#, PHP).
+- Exposes an OpenAPI specification for tooling and AI discovery.
+
+## MCP support (MCP-native)
+
+- AmunCore is Model Context Protocol (MCP) native. Endpoints you build become tools an AI assistant (such as Claude or ChatGPT) can call.
+- MCP tools run under the same API keys, permissions, and audit logging as the rest of the platform, so AI access is controlled and recorded.
+- One MCP configuration per company. Assistants discover available tools via `tools/list` and call them via `tools/call`, including a generic `call_api` tool to read and write through your endpoints.
+- Supports both local (stdio) transport for tools like Claude Desktop and HTTP transport for internet-connected assistants.
+
+### MCP tools available
+
+- list_applications: list the applications in your account.
+- get_application: get details of one application.
+- list_endpoints: list the endpoints of an application.
+- call_api: read or write data through any of your endpoints (the main data tool).
+- create_application: create a new application.
+- create_endpoint: create a new endpoint on an application.
+- toggle_endpoint: enable or disable an endpoint.
+- regenerate_api_key: rotate an application's API key.
+- get_audit_logs: read the audit trail.
+- get_license_status: check the current plan and license.
+- check_plan_limits: check plan limits and current usage.
+- get_dashboard_stats: get summary statistics.
+
+### MCP authentication, permissions, and audit
+
+- Authentication: MCP calls use the same API key mechanism as the REST API, so an assistant only sees the data that key is allowed to see.
+- Permissions: access is scoped to the company that owns the key; tenant isolation applies to MCP exactly as it does to the REST API.
+- Tool parameters and responses: each tool declares its input parameters via tools/list and returns structured JSON, so an agent can call it without guessing.
+- Errors: MCP tool errors use the same consistent shape as the REST API (success, message, and where relevant an error code).
+- Audit logging: MCP tool calls are recorded in the audit trail, so you can see what an assistant did and when.
+
+## Authentication and security
+
+- Per-endpoint API-key authentication protects all live API endpoints.
+- Passwords are hashed with BCrypt; sensitive connection details are encrypted with AES-256.
+- Optional TOTP-based two-factor authentication for accounts.
+- Multi-tenant isolation: each company's data, applications, and users are separated and enforced on every request.
+- Audit logging of API activity.
+
+## OpenAPI support
+
+- AmunCore publishes an OpenAPI specification for the Platform API so developers and AI tools can discover and understand it without logging in.
+- The OpenAPI specification is public; the actual API endpoints still require authentication.
+- Public specification: https://amuncore.com/openapi.json
+- Also available at: https://amuncore.com/swagger/v1/swagger.json
+- Interactive API reference (Swagger UI): https://amuncore.com/swagger
+- The specification is OpenAPI 3.0, which every major tool and AI agent can read.
+
+## How to call the API
+
+- List records: send GET to /api/v1/{appId}/{endpointName} with your API key in the X-Api-Key header.
+- Single record: send GET to /api/v1/{appId}/{endpointName}/{id}.
+- Create, update, delete: use POST, PUT, and DELETE on the same routes when the endpoint allows it.
+- List queries support paging and sorting: page, pageSize, orderBy, orderDir, and column filters like ?ColumnName=value.
+- Example: GET https://amuncore.com/api/v1/myapp/customers?page=1&pageSize=50 with header X-Api-Key: your_key
+
+## Error format
+
+- Every error returns a consistent JSON shape so tools and agents can handle failures reliably.
+- Fields: success (false), message (human readable), and where relevant error (a short code), requestId, and timestamp.
+- Common statuses: 400 bad request, 401 invalid or missing API key, 404 not found, 409 conflict, 422 validation failed, 429 monthly quota exhausted, 500 server error.
+- A 429 means the monthly call quota is used up; the response includes a Retry-After header.
+
+## Supported databases
+
+AmunCore works with all major relational databases, including SQL Server, MySQL, MariaDB, PostgreSQL, Oracle, and SQLite. More database engines are being added over time.
+
+## Main use cases
+
+- Give an existing database a secure REST API without building a backend.
+- Expose ERP or line-of-business data (for example, invoice or order data) as a clean, normalized API for other systems to consume.
+- Let AI assistants query and act on your data safely through MCP.
+- Provide partners or internal teams with documented, key-protected API access to specific tables.
+- Prototype and ship data-driven integrations quickly.
+
+## Links
+
+- Website: https://amuncore.com
+- OpenAPI specification (public): https://amuncore.com/openapi.json
+- Interactive API reference (Swagger UI): https://amuncore.com/swagger
+- MCP beginner's guide: https://amuncore.com/Help/Mcp
+- Contact: info@amuncore.com
+
+## Notes
+
+- AmunCore is a product of HYNOWorld.
+- The number of supported database engines grows over time; treat the list above as current rather than exhaustive.

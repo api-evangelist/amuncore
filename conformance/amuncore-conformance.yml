@@ -1,0 +1,118 @@
+generated: '2026-08-10'
+method: searched
+source: >-
+  https://amuncore.com/.well-known/oauth-authorization-server,
+  https://amuncore.com/.well-known/oauth-protected-resource,
+  https://amuncore.com/openapi.json, https://amuncore.com/llms.txt,
+  https://amuncore.com/security.html, and live TLS/DNS probes
+description: >-
+  What AmunCore actually conforms to, checked against fetched documents rather
+  than claims. The standards posture is stronger on the agent side than the REST
+  side: the MCP endpoint is fronted by a correct, discoverable OAuth 2.0
+  authorization surface (RFC 8414 + RFC 9728 + PKCE + dynamic client
+  registration), while the REST API is a plain API-key contract with a custom
+  error envelope rather than problem+json.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    https://amuncore.com/openapi.json parses as OpenAPI 3.0.1 with paths,
+    components.securitySchemes and a top-level security requirement. Served
+    unauthenticated and mirrored at /swagger/v1/swagger.json (byte-identical).
+- id: oauth2
+  conforms: true
+  evidence: >-
+    authorization_code + refresh_token grants with authorization, token and
+    registration endpoints advertised at
+    /.well-known/oauth-authorization-server.
+- id: rfc8414-authorization-server-metadata
+  conforms: true
+  evidence: /.well-known/oauth-authorization-server returns 200 application/json.
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: >-
+    /.well-known/oauth-protected-resource returns 200 naming
+    https://amuncore.com/mcp as the resource, and the MCP 401 carries the matching
+    WWW-Authenticate: Bearer resource_metadata="..." challenge.
+- id: rfc7636-pkce
+  conforms: true
+  evidence: 'code_challenge_methods_supported: ["S256"] — S256 only, no plain.'
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: 'registration_endpoint: https://amuncore.com/oauth/register advertised.'
+- id: mcp
+  conforms: true
+  evidence: >-
+    https://amuncore.com/mcp answers JSON-RPC 2.0 with a well-formed -32001 error
+    object; llms.txt documents tools/list and tools/call over both stdio and HTTP
+    transports.
+- id: openid-connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404; no id_token is issued.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use a custom {success,message,error,requestId,timestamp} envelope with
+    content type application/json, not application/problem+json. See
+    errors/amuncore-problem-types.yml.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No deprecation policy and no Sunset/Deprecation header support documented.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404.
+- id: a2a
+  conforms: false
+  evidence: >-
+    Both /.well-known/agent-card.json and /.well-known/agent.json return 404 on a
+    host with no SPA catch-all, so no agent card is published.
+- id: llms-txt
+  conforms: true
+  evidence: >-
+    https://amuncore.com/llms.txt returns 200 text/plain in the llms.txt shape —
+    H1, blockquote summary, then sectioned link and capability lists.
+- id: hsts
+  conforms: true
+  evidence: 'strict-transport-security: max-age=2592000 observed on every response.'
+- id: tls-1.3
+  conforms: true
+  evidence: Negotiated TLSv1.3 on amuncore.com.
+- id: dnssec
+  conforms: false
+  evidence: No DNSSEC on amuncore.com (see security/amuncore-domain-security.yml).
+- id: caa
+  conforms: false
+  evidence: No CAA records published for amuncore.com.
+- id: spf
+  conforms: true
+  evidence: SPF record present.
+- id: dmarc
+  conforms: true
+  evidence: DMARC present with policy reject.
+- id: hmac-sha256-webhook-signing
+  conforms: true
+  evidence: >-
+    https://amuncore.com/security.html — "Payloads signed with HMAC-SHA256 so
+    receivers can verify authenticity and detect tampering."
+- id: pagination-conventions
+  conforms: true
+  evidence: >-
+    Documented page/pageSize/orderBy/orderDir with a total count in the response
+    envelope. See conventions/amuncore-conventions.yml.
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No idempotency key header and no replay semantics documented; a retried POST
+    inserts twice.
+certifications: []
+compliance_programs: []
+compliance_note: >-
+  AmunCore publishes NO third-party certifications and is refreshingly direct
+  about it. Its security page carries an "Honest roadmap" section stating that
+  independent penetration testing and ISO 27001 alignment are not yet implemented,
+  alongside SSO and SIEM export. No SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP or
+  GDPR attestation is claimed anywhere on the site, so no Compliance pointer is
+  emitted for this provider — the artifact records the honest absence instead.

@@ -1,0 +1,64 @@
+generated: '2026-08-10'
+method: searched
+source: https://amuncore.com/swagger and https://amuncore.com/ (Developer experience section)
+description: >-
+  AmunCore publishes an interactive API console, but it is worth being precise
+  about what is and is not reachable without an account. The Swagger UI at
+  /swagger is public and renders the real spec anonymously. The "try it" path
+  behind it is not a sandbox: there is no test mode, no test keys and no fixture
+  data — a request executes against the customer's own live database. The free
+  plan is the trial surface.
+consoles:
+- name: Swagger UI (public API reference)
+  url: https://amuncore.com/swagger
+  access: public
+  status: 200
+  description: >-
+    Renders https://amuncore.com/openapi.json. Anyone can read the operations,
+    parameters and example payloads without signing in; executing a call still
+    needs a valid X-Api-Key.
+- name: Built-in API console (dashboard)
+  url: https://amuncore.com/Auth/Login
+  access: account-required
+  description: >-
+    "Try any endpoint live from the dashboard, tweak parameters, and see the real
+    response before you write a line of code" — per the homepage Developer
+    experience section. Requires sign-in.
+test_mode:
+  supported: false
+  note: >-
+    No test-vs-live key split, no test-mode prefix, no time simulation and no
+    seeded fixture data. Keys carry an ak_live_ prefix in the provider's own
+    homepage demo and no corresponding test prefix is documented anywhere, so
+    every call is against real data in the connected database. For a platform that
+    puts write verbs and an agent channel in front of production tables, the
+    absence of a test mode is the notable finding here.
+test_credentials: []
+test_data: []
+free_tier_as_trial:
+  url: https://amuncore.com/Register
+  plan: Free
+  quota: 1 application, 2 endpoints, 1,000 calls/day, SQL Server only
+  card_required: false
+  detail: plans/amuncore-plans-pricing.yml
+code_export:
+  description: >-
+    Every configured endpoint ships copy-paste client code. Languages advertised
+    are cURL, JavaScript, Python, C#, PHP and Go, plus a Postman collection and an
+    OpenAPI export. These are generated per endpoint from the dashboard, not
+    published as a public collection.
+  languages: [curl, javascript, python, csharp, php, go]
+gaps:
+- No sandbox environment and no test mode — an agent or a new integrator has no
+  safe place to exercise writes.
+- The generated Postman collection and OpenAPI export are dashboard downloads; no
+  public Postman workspace or collection exists, so no Postman pointer is emitted.
+evidence:
+- url: https://amuncore.com/swagger
+  status: 200
+  note: 'Title: "AmunCore API Engine: API Reference".'
+- url: https://amuncore.com/Register
+  status: 200
+- url: https://amuncore.com/Help
+  status: 200
+  note: Serves the sign-in page; help content is customer-only.

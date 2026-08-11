@@ -1,0 +1,122 @@
+generated: '2026-08-10'
+method: derived
+source: >-
+  openapi/amuncore-dynamic-api-openapi.yml (4xx/5xx responses and their inline
+  examples), enriched from https://amuncore.com/llms.txt and one live
+  unauthenticated call to https://amuncore.com/api/v1/demo/customers
+format: custom-json
+problem_json: false
+description: >-
+  AmunCore returns a single consistent JSON error envelope across every generated
+  endpoint. It is not RFC 9457 problem+json — there is no type URI, no title, and
+  the content type is application/json rather than application/problem+json — but
+  it is documented, machine-readable, and carries a short stable error code, which
+  is what an agent actually needs to branch on.
+envelope:
+  content_type: application/json
+  fields:
+    success: false
+    message: human-readable description
+    error: short machine code (documented as present "where relevant")
+    requestId: correlation id such as req_9f2c1a7b (where relevant)
+    timestamp: ISO 8601 (where relevant)
+  example:
+    success: false
+    error: UNAUTHORIZED
+    message: Invalid or missing API key
+    requestId: req_9f2c1a7b
+    timestamp: '2026-01-15T10:30:00Z'
+problems:
+- status: 400
+  code: BAD_REQUEST
+  title: Bad request or database error
+  remediation: >-
+    Check the query parameters against the columns the endpoint exposes, and the
+    body against the target table's column types. The same code covers a malformed
+    request and an error raised by the underlying database engine, so the message
+    is the only way to tell a client mistake from a server-side data problem.
+  source_operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+- status: 401
+  code: UNAUTHORIZED
+  title: Invalid or missing API key
+  remediation: >-
+    Send a valid key in the X-Api-Key header. Observed live, the response body is
+    "Application '<appId>' not found or API key does not match." — an unknown
+    application and a wrong key are deliberately indistinguishable.
+  source_operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+- status: 404
+  code: NOT_FOUND
+  title: Application or endpoint not found
+  remediation: >-
+    Verify appId and endpointName, and that the endpoint is enabled — a disabled
+    endpoint is not distinguishable from a missing one at this status.
+  source_operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Put
+  - DynamicApi_Delete
+- status: 409
+  code: CONFLICT
+  title: Conflict (for example a duplicate key)
+  remediation: >-
+    The write violated a database constraint, typically a unique or primary key.
+    Retrying unchanged will fail again. Note there is no idempotency key, so a
+    409 on a retried create may mean the first attempt actually succeeded.
+  source_operations:
+  - DynamicApi_Post
+- status: 422
+  code: VALIDATION_FAILED
+  title: Validation failed for the request body
+  remediation: >-
+    A field failed type or constraint validation before reaching the database.
+    Correct the offending field and resubmit.
+  source_operations:
+  - DynamicApi_Post
+- status: 429
+  code: RATE_LIMITED
+  title: Monthly call quota exhausted
+  remediation: >-
+    The plan's call quota is used up. Honour the Retry-After header; check
+    X-RateLimit-Remaining and X-RateLimit-Reset before the next burst, or use the
+    check_plan_limits MCP tool to read remaining quota ahead of time. This is a
+    billing-period quota, not a per-second throttle, so backoff alone will not
+    clear it — see rate-limits/amuncore-rate-limits.yml.
+  source_operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+- status: 500
+  code: SERVER_ERROR
+  title: Unexpected server error
+  remediation: Retry with backoff; quote the requestId when contacting support.
+  source_operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Put
+  - DynamicApi_Delete
+coverage:
+  documented_codes: 7
+  operations_covered: 5
+gaps:
+- No 403. Authorization failures (a read-only key attempting a write, an IP outside
+  the allowlist) are not given a distinct documented status; only 401 appears in
+  the spec.
+- POST declares no 404 and no 500, and the write operations declare no 503, so the
+  documented response set is not uniform across verbs.
+- No error type URIs and no error-reference page, so the codes above are only
+  discoverable from the OpenAPI examples and llms.txt.
+- Errors are documented as inline examples on each response rather than as a named
+  ErrorResponse schema — the spec's own description refers to "the ErrorResponse
+  schema", but components.schemas is empty, so that $ref does not exist.

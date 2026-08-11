@@ -1,0 +1,73 @@
+generated: '2026-08-10'
+method: probed
+source: https://amuncore.com/.well-known/
+host: https://amuncore.com
+description: >-
+  AmunCore serves a real OAuth 2.0 discovery surface at the well-known root. Both
+  RFC 8414 (authorization server metadata) and RFC 9728 (protected resource
+  metadata) return live JSON documents that describe how an agent authorizes
+  against the MCP endpoint. This is a genuine hit, not an SPA catch-all: the
+  control path and every other well-known path on this host return a hard 404
+  with an empty body, so the two 200s below are documents the provider
+  deliberately publishes.
+documents:
+- path: /.well-known/oauth-authorization-server
+  spec: RFC 8414
+  status: 200
+  content_type: application/json
+  file: amuncore-oauth-authorization-server.json
+  note: >-
+    Issuer https://amuncore.com with authorization, token and dynamic client
+    registration endpoints, authorization_code + refresh_token grants, PKCE S256
+    required, and a single supported scope "mcp".
+- path: /.well-known/oauth-protected-resource
+  spec: RFC 9728
+  status: 200
+  content_type: application/json
+  file: amuncore-oauth-protected-resource.json
+  note: >-
+    Declares https://amuncore.com/mcp as the protected resource, points back at
+    this host as its authorization server, and names llms.txt as the resource
+    documentation. The MCP endpoint's 401 carries a matching
+    WWW-Authenticate: Bearer resource_metadata="..." challenge.
+- path: /.well-known/security.txt
+  spec: RFC 9116
+  status: 404
+- path: /.well-known/openid-configuration
+  spec: OpenID Connect Discovery 1.0
+  status: 404
+- path: /.well-known/api-catalog
+  spec: RFC 9727
+  status: 404
+- path: /.well-known/ai-plugin.json
+  status: 404
+- path: /.well-known/agent-card.json
+  spec: A2A 1.0.0
+  status: 404
+- path: /.well-known/agent.json
+  spec: A2A legacy (pre-0.3)
+  status: 404
+control:
+  path: /zzz-control-nonsense
+  status: 404
+  note: >-
+    Control path returns a genuine 404 with a zero-byte body, so this host has no
+    single-page-app catch-all and the 404s recorded above are real absences
+    rather than soft misses.
+gaps:
+- No /.well-known/security.txt — there is no machine-readable security contact or
+  vulnerability-disclosure pointer, even though the provider publishes a
+  human-readable security page at https://amuncore.com/security.html.
+- No /.well-known/api-catalog, so the OpenAPI at /openapi.json is discoverable
+  only from llms.txt and the homepage rather than from an RFC 9727 catalog.
+evidence:
+- url: https://amuncore.com/.well-known/oauth-authorization-server
+  status: 200
+- url: https://amuncore.com/.well-known/oauth-protected-resource
+  status: 200
+- url: https://amuncore.com/.well-known/security.txt
+  status: 404
+- url: https://amuncore.com/.well-known/agent-card.json
+  status: 404
+- url: https://amuncore.com/.well-known/agent.json
+  status: 404

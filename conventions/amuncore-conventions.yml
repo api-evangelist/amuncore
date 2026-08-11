@@ -1,0 +1,144 @@
+generated: '2026-08-10'
+method: searched
+source: >-
+  https://amuncore.com/llms.txt and https://amuncore.com/openapi.json — the
+  cross-cutting request/response semantics that apply to every generated
+  AmunCore endpoint rather than to any single operation.
+description: >-
+  How the AmunCore generated REST API behaves across every operation:
+  authentication style, pagination, filtering and sorting, the response and error
+  envelopes, request tracing, versioning, and rate-limit signaling. Because the
+  endpoints are generated per tenant, these conventions are the only stable
+  contract a consumer can rely on — the paths and columns differ per account, the
+  envelope does not.
+
+base_url: https://amuncore.com
+api_style: REST over HTTPS, JSON requests, JSON responses
+route_shape: >-
+  /api/v1/{appId}/{endpointName} for collections and
+  /api/v1/{appId}/{endpointName}/{id} for a single record. appId identifies the
+  registered application; endpointName is the endpoint the account configured over
+  a table, view or stored procedure.
+
+authentication:
+  scheme: API key in the X-Api-Key request header
+  key_types: [per-application read-only, per-application read-write]
+  detail: authentication/amuncore-authentication.yml
+  note: >-
+    The MCP channel uses a separate MCP-Token header or an OAuth bearer token —
+    deliberately not the REST key.
+
+idempotency:
+  supported: false
+  mechanism: null
+  note: >-
+    AmunCore documents no idempotency key header and no request-replay semantics.
+    POST creates a record on every call; PUT and DELETE target a single record by
+    id and are therefore naturally idempotent, but there is no client-supplied key
+    that would make a retried POST safe. This is a real gap for agent use: an
+    agent that retries a create after a timeout will insert twice.
+
+pagination:
+  style: page-number
+  request_params:
+    page: Page number, 1-based.
+    pageSize: Records per page, maximum 500.
+  response_fields:
+    success: boolean
+    page: the page returned
+    pageSize: the page size in effect
+    total: total matching records
+    data: array of records
+  note: >-
+    Offset/page pagination with a total count, which is simple to consume but gets
+    expensive and drifts under concurrent writes on large tables. No cursor option
+    is documented.
+  docs: https://amuncore.com/llms.txt
+
+sorting:
+  request_params:
+    orderBy: column to sort by
+    orderDir: ASC or DESC
+  note: The column named must be one the endpoint exposes.
+
+filtering:
+  style: bare column-name query parameters
+  mechanism: '?ColumnName=value — the parameter name is the actual column name'
+  example: 'GET https://amuncore.com/api/v1/myapp/customers?page=1&pageSize=50&city=Dubai'
+  note: >-
+    The OpenAPI declares this as a placeholder parameter literally named
+    "fieldName" with the description "Filter: ?FieldName=value (replace with actual
+    column name)". Filters are therefore not enumerable from the spec — an agent
+    must read the endpoint's own generated documentation or its data to learn the
+    filterable columns. Server-side the filters compile into parameterized queries;
+    the provider states user input is never concatenated into SQL.
+
+field_selection:
+  supported: at-configuration-time
+  mechanism: >-
+    Columns are chosen when the endpoint is configured, not per request. There is
+    no sparse-fieldset or expand parameter — an endpoint returns exactly the
+    columns it was built to return, which is also the platform's data-minimization
+    control.
+
+response_envelope:
+  success_field: success (boolean, true on success)
+  collection: '{success, page, pageSize, total, data: []}'
+  single: '{success, data: {}}'
+  created: '201 with {success: true, data: {...}}'
+
+error_envelope:
+  format: custom JSON (not RFC 9457 problem+json)
+  content_type: application/json
+  fields:
+    success: false
+    message: human-readable message
+    error: short machine code, where relevant
+    requestId: correlation id, where relevant
+    timestamp: ISO 8601 timestamp, where relevant
+  detail: errors/amuncore-problem-types.yml
+  note: >-
+    The envelope is consistent and documented, which is the important part, but
+    error, requestId and timestamp are documented as "where relevant" rather than
+    always present — and the live 401 observed on 2026-08-10 returned only success
+    and message. An agent must treat the machine code as optional.
+
+request_tracing:
+  request_id_field: requestId (in the error body, e.g. req_9f2c1a7b)
+  request_id_header: null
+  note: >-
+    No correlation id was observed on successful responses or in any response
+    header; tracing identifiers appear only inside error bodies, so a successful
+    call cannot be correlated to a support ticket or an audit-log line by the
+    caller.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  mechanism: The version segment in /api/v1/...
+  detail: lifecycle/amuncore-lifecycle.yml
+  note: OpenAPI info.version is "v1", matching the path segment.
+
+rate_limit_signaling:
+  headers: [X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset]
+  exhausted_status: 429
+  retry_after: 'Retry-After header on 429'
+  quota_basis: monthly (daily on the free plan)
+  detail: rate-limits/amuncore-rate-limits.yml
+  note: >-
+    Documented as "responses MAY include" the three headers, so an agent should not
+    assume they are present on every response.
+
+webhooks:
+  supported: true
+  signing: HMAC-SHA256
+  detail: asyncapi/amuncore-webhooks.yml
+
+conditional_requests:
+  etag: false
+  last_modified: false
+  note: No caching or concurrency-control headers are documented; a PUT is last-write-wins.
+
+bulk_operations:
+  supported: false
+  note: Writes target a single record on a single table.

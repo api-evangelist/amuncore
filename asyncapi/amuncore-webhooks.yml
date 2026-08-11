@@ -1,0 +1,46 @@
+generated: '2026-08-10'
+method: searched
+source: https://amuncore.com/ (Features section) and https://amuncore.com/security.html
+description: >-
+  AmunCore ships an outbound webhook surface: every write through a generated
+  endpoint can notify a subscriber, signed and retried, optionally carrying the
+  previous values of the changed row. No AsyncAPI document is published and the
+  webhook configuration UI sits behind the dashboard, so what is recorded here is
+  the publicly documented catalog rather than a machine-readable event contract.
+  Nothing below is inferred beyond what the provider states.
+spec_published: false
+spec_url: null
+style: outbound-http-webhooks
+transport: HTTPS POST to a subscriber-supplied URL
+events:
+- name: write
+  trigger: Any write through a generated endpoint (create, update or delete).
+  payload_note: >-
+    The provider states notifications can include "the previous values if you need
+    them", so the payload can carry a before-image of the changed row. The exact
+    field names and envelope are not published.
+  source: 'https://amuncore.com/ — "Webhooks: Get notified on every write, signed and retried, with the previous values if you need them."'
+security:
+  signing: HMAC-SHA256
+  purpose: Receivers can verify authenticity and detect tampering.
+  source: https://amuncore.com/security.html
+delivery:
+  retries: true
+  retry_policy: Not published — "retried" is stated without a schedule or attempt count.
+  logging: Delivery attempts and outcomes are recorded and visible in the audit trail.
+gaps:
+- No AsyncAPI document. There is no machine-readable event contract, so a consumer
+  cannot generate a handler or validate a payload against a schema.
+- No published event catalog beyond the single "on every write" trigger — no
+  distinct created/updated/deleted event names.
+- No payload schema, no signature header name, and no documented timestamp or
+  replay-protection window, which are the three things a receiver needs to verify
+  an HMAC signature correctly.
+- No documented retry schedule, backoff or dead-letter behaviour.
+- Webhook configuration is dashboard-only; the setup surface could not be reached
+  anonymously.
+evidence:
+- url: https://amuncore.com/
+  status: 200
+- url: https://amuncore.com/security.html
+  status: 200

@@ -7,10 +7,13 @@ description: 'AmunCore turns a database into a secure REST API without writing a
   be a two-to-six-week project. It supports SQL Server, MySQL, MariaDB, PostgreSQL, Oracle and SQLite,
   with a visual builder that is the same regardless of the engine underneath. It is MCP-native by design:
   the endpoints you build become tools an AI assistant can call under the same keys, permissions and audit
-  trail, and the MCP endpoint is live and token-gated. Full CRUD, a free plan, and Bearer API keys.'
+  trail, and the MCP endpoint is live, token-gated and now fronted by RFC 8414/9728 OAuth discovery.
+  A public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header.
+  Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a
+  free plan forever, and paid tiers from $29/mo.'
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/amuncore.png
 created: '2026-08-03'
-modified: '2026-08-03'
+modified: '2026-08-10'
 specificationVersion: '0.21'
 type: Index
 position: Producing
@@ -28,6 +31,11 @@ tags:
 - MCP
 - Agents
 - Data
+- SQL Server
+- Webhooks
+- OpenAPI
+- Low Code
+- Egypt
 apis:
 - aid: amuncore:amuncore-api
   name: AmunCore API
@@ -44,21 +52,101 @@ apis:
   properties:
   - url: https://amuncore.com
     type: Website
+  - url: https://amuncore.com/swagger
+    type: Documentation
+  - url: openapi/amuncore-dynamic-api-openapi.yml
+    type: OpenAPI
+  - url: examples/amuncore-dynamic-api-examples.yml
+    type: Examples
+  - url: overlays/amuncore-dynamic-api-overlay.yaml
+    type: Overlay
   - url: authentication/amuncore-authentication.yml
     type: Authentication
+  - url: scopes/amuncore-scopes.yml
+    type: OAuthScopes
+  - url: conventions/amuncore-conventions.yml
+    type: Conventions
+  - url: errors/amuncore-problem-types.yml
+    type: ErrorCatalog
+  - url: rate-limits/amuncore-rate-limits.yml
+    type: RateLimits
+  - url: data-model/amuncore-data-model.yml
+    type: DataModel
   - url: mcp/amuncore-mcp.yml
     type: MCPServer
-  - url: plans/amuncore-plans.yml
+  - url: mcp/amuncore-tool-crosswalk.yml
+    type: ToolCrosswalk
+  - url: asyncapi/amuncore-webhooks.yml
+    type: Webhooks
+  - url: plans/amuncore-plans-pricing.yml
     type: Plans
 common:
+- type: AgenticAccess
+  url: agentic-access/amuncore-agentic-access.yml
+- type: DomainSecurity
+  url: security/amuncore-domain-security.yml
 - url: https://amuncore.com
   type: Website
+- url: https://amuncore.com/swagger
+  type: Documentation
+- url: https://amuncore.com/llms.txt
+  type: LLMsTxt
+- url: openapi/amuncore-dynamic-api-openapi.yml
+  type: OpenAPI
+- url: examples/amuncore-dynamic-api-examples.yml
+  type: Examples
+- url: overlays/amuncore-dynamic-api-overlay.yaml
+  type: Overlay
+- url: llms/amuncore-llms.txt
+  type: LLMsTxt
+- url: well-known/amuncore-well-known.yml
+  type: WellKnown
 - url: mcp/amuncore-mcp.yml
   type: MCPServer
+- url: mcp/amuncore-tool-crosswalk.yml
+  type: ToolCrosswalk
+- url: skills/_index.yml
+  type: AgentSkill
 - url: authentication/amuncore-authentication.yml
   type: Authentication
-- url: plans/amuncore-plans.yml
+- url: scopes/amuncore-scopes.yml
+  type: OAuthScopes
+- url: conventions/amuncore-conventions.yml
+  type: Conventions
+- url: errors/amuncore-problem-types.yml
+  type: ErrorCatalog
+- url: rate-limits/amuncore-rate-limits.yml
+  type: RateLimits
+- url: lifecycle/amuncore-lifecycle.yml
+  type: Lifecycle
+- url: data-model/amuncore-data-model.yml
+  type: DataModel
+- url: conformance/amuncore-conformance.yml
+  type: Conformance
+- url: security/amuncore-trust-center.yml
+  type: TrustCenter
+- url: sandbox/amuncore-sandbox.yml
+  type: Sandbox
+- url: asyncapi/amuncore-webhooks.yml
+  type: Webhooks
+- url: packages/amuncore-packages.yml
+  type: Packages
+- url: plans/amuncore-plans-pricing.yml
   type: Plans
+- url: https://amuncore.com/#pricing
+  type: Pricing
+- url: https://amuncore.com/Register
+  type: SignUp
+- url: https://amuncore.com/Auth/Login
+  type: Login
+- url: https://amuncore.com/terms.html
+  type: TermsOfService
+- url: https://amuncore.com/privacy.html
+  type: PrivacyPolicy
+- url: https://amuncore.com/#contact
+  type: Support
+- url: https://amuncore.com/about.html
+  type: About
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -82,14 +170,82 @@ X-Discovery:
     url: https://amuncore.com/openapi.json
     http_status: 404
     real: false
-    note: None published for the platform itself. Note the product GENERATES APIs per tenant, so a platform-level
-      spec is a different thing from the specs it produces.
+    note: 'SUPERSEDED — see the 2026-08-10 re-probe below. On 2026-08-03 none was published for the platform
+      itself. Note the product GENERATES APIs per tenant, so a platform-level spec is a different thing
+      from the specs it produces.'
   - surface: LlmsTxt
     url: https://amuncore.com/llms.txt
     http_status: 404
     real: false
+    note: SUPERSEDED — see the 2026-08-10 re-probe below.
   - surface: Control
     url: https://amuncore.com/zzz-control-nonsense
     http_status: 404
     real: false
     note: Control path correctly 404s — no SPA catch-all, so the probes above are trustworthy.
+X-Reprobe:
+  date: '2026-08-10'
+  method: probed
+  note: >-
+    Re-probed on the second enrichment pass. AmunCore shipped a machine-readable contract surface in
+    the seven days after first profiling: the OpenAPI, llms.txt and both OAuth discovery documents were
+    all 404 on 2026-08-03 and are all 200 now. The 2026-08-03 findings above are kept for the record and
+    marked SUPERSEDED rather than rewritten. Note this also means the provider changed its public contract
+    with no changelog and no status page to announce it.
+  findings:
+  - surface: OpenAPI
+    url: https://amuncore.com/openapi.json
+    http_status: 200
+    real: true
+    note: OpenAPI 3.0.1, 5 operations over 2 paths, X-Api-Key security scheme, examples on all 30 responses.
+      Byte-identical mirror at https://amuncore.com/swagger/v1/swagger.json.
+  - surface: APIReference
+    url: https://amuncore.com/swagger
+    http_status: 200
+    real: true
+    note: Public Swagger UI, no sign-in required.
+  - surface: LlmsTxt
+    url: https://amuncore.com/llms.txt
+    http_status: 200
+    real: true
+    note: 6.2KB, well-formed, and it publishes the twelve MCP tool names — the only anonymous route to
+      the tool list, since tools/list itself is gated.
+  - surface: WellKnown
+    url: https://amuncore.com/.well-known/oauth-authorization-server
+    http_status: 200
+    real: true
+    note: RFC 8414 metadata — authorization_code + refresh_token, PKCE S256 only, RFC 7591 dynamic client
+      registration, single scope "mcp".
+  - surface: WellKnown
+    url: https://amuncore.com/.well-known/oauth-protected-resource
+    http_status: 200
+    real: true
+    note: RFC 9728 metadata naming https://amuncore.com/mcp as the protected resource; the MCP 401 now
+      carries the matching WWW-Authenticate Bearer challenge.
+  - surface: AgentCard
+    url: https://amuncore.com/.well-known/agent-card.json
+    http_status: 404
+    real: false
+    note: Legacy /.well-known/agent.json also 404. No A2A agent card, so nothing was written to a2a/.
+  - surface: SecurityTxt
+    url: https://amuncore.com/.well-known/security.txt
+    http_status: 404
+    real: false
+  - surface: GraphQL
+    url: https://amuncore.com/graphql
+    http_status: 404
+    real: false
+    note: security.html documents a GraphQL channel, but /graphql, /api/graphql and /api/v1/graphql all
+      404 — the GraphQL surface is generated per tenant, not served at the platform root.
+  - surface: StatusPage
+    url: https://status.amuncore.com/
+    http_status: 0
+    real: false
+    note: DNS does not resolve. /changelog and /pricing also 404 — no status page, no changelog, and no
+      standalone pricing route.
+x-enrichment:
+  date: '2026-08-10'
+  status: enriched
+  artifacts_added: 27
+  artifacts_updated: 3
+  pass: local-v1

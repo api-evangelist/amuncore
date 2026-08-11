@@ -1,0 +1,81 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the AmunCore Dynamic API
+  version: 1.0.0
+extends: openapi/amuncore-dynamic-api-openapi.yml
+x-provenance:
+  generated: '2026-08-10'
+  method: generated
+  source: >-
+    Derived from artifacts in this repository — conventions, errors, rate-limits,
+    authentication, mcp and lifecycle — all of which were themselves searched or
+    probed against https://amuncore.com. This overlay never mutates the harvested
+    spec at openapi/_original/amuncore-openapi.json.
+actions:
+- target: $.info
+  description: Record the profile, the rate-limit posture, and the runtime facts the spec leaves out.
+  update:
+    x-apievangelist-profile: https://apis.io/provider/amuncore/
+    x-apievangelist-reviewed: '2026-08-10'
+    x-error-format: custom-json
+    x-problem-json: false
+    x-idempotency-supported: false
+    x-rate-limit-basis: plan-quota
+    x-rate-limit-headers:
+    - X-RateLimit-Limit
+    - X-RateLimit-Remaining
+    - X-RateLimit-Reset
+    x-retry-after: true
+- target: $.info
+  description: Declare the tag the operations already use, which the published spec omits.
+  update:
+    x-tags-declared-by-overlay: true
+- target: $.paths['/api/v1/{appId}/{endpointName}'].get
+  description: >-
+    Make the generic filter parameter legible — the spec ships a placeholder named
+    "fieldName" whose real name is the tenant's own column.
+  update:
+    x-filter-convention: '?ColumnName=value, where ColumnName is a column the endpoint exposes'
+    x-pagination-style: page-number
+    x-page-size-max: 500
+    x-response-envelope:
+    - success
+    - page
+    - pageSize
+    - total
+    - data
+- target: $.paths['/api/v1/{appId}/{endpointName}'].post
+  description: Flag the retry hazard on the only non-idempotent operation in the contract.
+  update:
+    x-idempotent: false
+    x-retry-hazard: >-
+      No idempotency key is supported. A retried create after a timeout inserts a
+      second row, or returns 409 if a unique constraint catches it — in which case
+      the first attempt may have succeeded.
+    x-agentic-consequence: write
+- target: $.paths['/api/v1/{appId}/{endpointName}/{id}'].put
+  update:
+    x-idempotent: true
+    x-concurrency-control: none
+    x-agentic-consequence: write
+    x-note: Last-write-wins; no ETag or If-Match support is documented.
+- target: $.paths['/api/v1/{appId}/{endpointName}/{id}'].delete
+  update:
+    x-idempotent: true
+    x-agentic-consequence: destructive
+    x-reversible: false
+- target: $.components.securitySchemes.ApiKeyAuth
+  description: Record the key properties documented outside the spec.
+  update:
+    x-key-scoping: per-application, issuable read-only or read-write
+    x-key-storage: hashed; raw value shown once
+    x-key-rotation: dashboard, or the regenerate_api_key MCP tool
+    x-ip-allowlist: optional, per application
+- target: $.components
+  description: Bind the agent surface to the contract.
+  update:
+    x-mcp-server: https://amuncore.com/mcp
+    x-mcp-tool-crosswalk: mcp/amuncore-tool-crosswalk.yml
+    x-mcp-oauth-scopes:
+    - mcp
+    x-llms-txt: https://amuncore.com/llms.txt

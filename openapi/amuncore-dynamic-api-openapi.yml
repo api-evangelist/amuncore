@@ -1,0 +1,606 @@
+openapi: 3.0.1
+info:
+  title: 'AmunCore API Engine: Dynamic API'
+  description: |-
+    Turn any database into a secure REST API. Register an application, pick the tables and columns to expose, and call your data over HTTP with an API key.
+
+    **Authentication:** send your API key in the `X-Api-Key` header on every request.
+
+    **Base route:** `GET /api/v1/{appId}/{endpointName}` returns a list, `GET /api/v1/{appId}/{endpointName}/{id}` returns a single record. POST creates, PUT updates, DELETE removes (when the endpoint allows it).
+
+    **Errors:** all errors return a consistent JSON shape with `success`, `message`, and where relevant `error`, `requestId`, and `timestamp`. See the ErrorResponse schema.
+
+    **Rate limits:** responses may include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`. A `429` means the monthly call quota is exhausted.
+
+    This specification is public; the endpoints themselves still require a valid API key.
+  contact:
+    name: AmunCore
+    url: https://amuncore.com
+    email: info@amuncore.com
+  license:
+    name: AmunCore Terms
+    url: https://amuncore.com
+  version: v1
+servers:
+- url: https://amuncore.com
+  description: AmunCore production
+paths:
+  /api/v1/{appId}/{endpointName}:
+    get:
+      tags:
+      - Dynamic API
+      summary: 'GET: fetch all records'
+      operationId: DynamicApi_GetList
+      parameters:
+      - name: appId
+        in: path
+        description: Application AppId
+        required: true
+        schema:
+          type: string
+      - name: endpointName
+        in: path
+        description: Endpoint name
+        required: true
+        schema:
+          type: string
+      - name: X-Api-Key
+        in: header
+        description: API Key (required for authenticated endpoints)
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number (1-based)
+        schema:
+          type: integer
+      - name: pageSize
+        in: query
+        description: Records per page (max 500)
+        schema:
+          type: integer
+      - name: orderBy
+        in: query
+        description: Column to sort by
+        schema:
+          type: string
+      - name: orderDir
+        in: query
+        description: ASC or DESC
+        schema:
+          type: string
+      - name: fieldName
+        in: query
+        description: 'Filter: ?FieldName=value (replace with actual column name)'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success. Returns the matching records.
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: true
+                page: 1
+                pageSize: 50
+                total: 2
+                data:
+                - id: 1
+                  name: Acme Corp
+                  email: hello@acme.com
+                - id: 2
+                  name: Globex
+                  email: info@globex.com
+        '400':
+          description: Bad request or database error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: BAD_REQUEST
+                message: Bad request or database error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: UNAUTHORIZED
+                message: Invalid or missing API key
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '404':
+          description: Application or endpoint not found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: NOT_FOUND
+                message: Application or endpoint not found
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '429':
+          description: Monthly call quota exhausted
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: RATE_LIMITED
+                message: Monthly call quota exhausted
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '500':
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: SERVER_ERROR
+                message: Unexpected server error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+    post:
+      tags:
+      - Dynamic API
+      summary: 'POST: insert a new record'
+      operationId: DynamicApi_Post
+      parameters:
+      - name: appId
+        in: path
+        description: Application AppId
+        required: true
+        schema:
+          type: string
+      - name: endpointName
+        in: path
+        description: Endpoint name
+        required: true
+        schema:
+          type: string
+      - name: X-Api-Key
+        in: header
+        description: API Key (required for authenticated endpoints)
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                FieldName: value
+                AnotherField: 0
+        required: true
+      responses:
+        '201':
+          description: Record created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: true
+                data:
+                  id: 3
+                  name: New Record
+        '400':
+          description: Bad request or database error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: BAD_REQUEST
+                message: Bad request or database error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: UNAUTHORIZED
+                message: Invalid or missing API key
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '409':
+          description: Conflict (for example a duplicate key)
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: CONFLICT
+                message: Conflict (for example a duplicate key)
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '422':
+          description: Validation failed for the request body
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: VALIDATION_FAILED
+                message: Validation failed for the request body
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '429':
+          description: Monthly call quota exhausted
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: RATE_LIMITED
+                message: Monthly call quota exhausted
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+  /api/v1/{appId}/{endpointName}/{id}:
+    get:
+      tags:
+      - Dynamic API
+      summary: 'GET: fetch a single record by ID'
+      operationId: DynamicApi_GetById
+      parameters:
+      - name: appId
+        in: path
+        description: Application AppId
+        required: true
+        schema:
+          type: string
+      - name: endpointName
+        in: path
+        description: Endpoint name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Record primary key value
+        required: true
+        schema:
+          type: string
+      - name: X-Api-Key
+        in: header
+        description: API Key (required for authenticated endpoints)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success. Returns the matching records.
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: true
+                page: 1
+                pageSize: 50
+                total: 2
+                data:
+                - id: 1
+                  name: Acme Corp
+                  email: hello@acme.com
+                - id: 2
+                  name: Globex
+                  email: info@globex.com
+        '400':
+          description: Bad request or database error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: BAD_REQUEST
+                message: Bad request or database error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: UNAUTHORIZED
+                message: Invalid or missing API key
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '404':
+          description: Application or endpoint not found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: NOT_FOUND
+                message: Application or endpoint not found
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '429':
+          description: Monthly call quota exhausted
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: RATE_LIMITED
+                message: Monthly call quota exhausted
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '500':
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: SERVER_ERROR
+                message: Unexpected server error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+    put:
+      tags:
+      - Dynamic API
+      summary: 'PUT: update a record by ID'
+      operationId: DynamicApi_Put
+      parameters:
+      - name: appId
+        in: path
+        description: Application AppId
+        required: true
+        schema:
+          type: string
+      - name: endpointName
+        in: path
+        description: Endpoint name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Record primary key value
+        required: true
+        schema:
+          type: string
+      - name: X-Api-Key
+        in: header
+        description: API Key (required for authenticated endpoints)
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                FieldName: value
+                AnotherField: 0
+        required: true
+      responses:
+        '200':
+          description: Success. Returns the matching records.
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: true
+                page: 1
+                pageSize: 50
+                total: 2
+                data:
+                - id: 1
+                  name: Acme Corp
+                  email: hello@acme.com
+                - id: 2
+                  name: Globex
+                  email: info@globex.com
+        '400':
+          description: Bad request or database error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: BAD_REQUEST
+                message: Bad request or database error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: UNAUTHORIZED
+                message: Invalid or missing API key
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '404':
+          description: Application or endpoint not found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: NOT_FOUND
+                message: Application or endpoint not found
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '429':
+          description: Monthly call quota exhausted
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: RATE_LIMITED
+                message: Monthly call quota exhausted
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '500':
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: SERVER_ERROR
+                message: Unexpected server error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+    delete:
+      tags:
+      - Dynamic API
+      summary: 'DELETE: remove a record by ID'
+      operationId: DynamicApi_Delete
+      parameters:
+      - name: appId
+        in: path
+        description: Application AppId
+        required: true
+        schema:
+          type: string
+      - name: endpointName
+        in: path
+        description: Endpoint name
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: Record primary key value
+        required: true
+        schema:
+          type: string
+      - name: X-Api-Key
+        in: header
+        description: API Key (required for authenticated endpoints)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success. Returns the matching records.
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: true
+                page: 1
+                pageSize: 50
+                total: 2
+                data:
+                - id: 1
+                  name: Acme Corp
+                  email: hello@acme.com
+                - id: 2
+                  name: Globex
+                  email: info@globex.com
+        '400':
+          description: Bad request or database error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: BAD_REQUEST
+                message: Bad request or database error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: UNAUTHORIZED
+                message: Invalid or missing API key
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '404':
+          description: Application or endpoint not found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: NOT_FOUND
+                message: Application or endpoint not found
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '429':
+          description: Monthly call quota exhausted
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: RATE_LIMITED
+                message: Monthly call quota exhausted
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+        '500':
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                success: false
+                error: SERVER_ERROR
+                message: Unexpected server error
+                requestId: req_9f2c1a7b
+                timestamp: '2026-01-15T10:30:00Z'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      description: Your application's API key. Sent on every request as the X-Api-Key header. A missing or invalid key returns
+        401.
+      name: X-Api-Key
+      in: header
+security:
+- ApiKeyAuth: []
+tags:
+- name: Dynamic API
+  description: Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.

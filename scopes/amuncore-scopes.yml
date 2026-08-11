@@ -1,0 +1,56 @@
+generated: '2026-08-10'
+method: probed
+source: https://amuncore.com/.well-known/oauth-authorization-server
+docs: https://amuncore.com/llms.txt
+description: >-
+  AmunCore's OAuth surface exists solely to authorize the MCP endpoint. The
+  RFC 8414 authorization server metadata declares exactly one scope — "mcp" —
+  and the RFC 9728 protected resource metadata confirms it applies to
+  https://amuncore.com/mcp. The REST API itself does not use OAuth at all; it is
+  authenticated with an X-Api-Key header, so there is no scope surface on the
+  REST side and none is invented here.
+schemes:
+- name: OAuth 2.0 (MCP authorization)
+  source: https://amuncore.com/.well-known/oauth-authorization-server
+  issuer: https://amuncore.com
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://amuncore.com/oauth/authorize
+    tokenUrl: https://amuncore.com/oauth/token
+    pkce: S256
+    note: PKCE with S256 is the only code challenge method advertised.
+  grant_types: [authorization_code, refresh_token]
+  registration_endpoint: https://amuncore.com/oauth/register
+  registration_spec: RFC 7591 dynamic client registration
+  token_endpoint_auth_methods: [none, client_secret_post]
+scopes:
+- scope: mcp
+  description: >-
+    Access to the AmunCore MCP endpoint at https://amuncore.com/mcp. AmunCore
+    publishes no finer-grained scope decomposition; authorization is coarse at
+    the protocol boundary and the actual data a caller can reach is bounded by
+    the API key / company tenancy behind the token rather than by scope.
+  flows: [authorizationCode]
+  resource: https://amuncore.com/mcp
+  sources: ['https://amuncore.com/.well-known/oauth-authorization-server']
+coverage:
+  scopes_declared: 1
+  rest_api_uses_oauth: false
+gaps:
+- Single coarse scope. There is no read-only vs read-write split at the OAuth
+  layer, so an agent token cannot be narrowed below "everything this company's
+  key can reach". Per-endpoint and read-only keys exist on the REST side
+  (scoped API keys) but are not projected into OAuth scopes.
+- No openid-configuration, so this is plain OAuth 2.0 authorization rather than
+  OpenID Connect; there is no identity token for the acting agent.
+evidence:
+- url: https://amuncore.com/.well-known/oauth-authorization-server
+  status: 200
+- url: https://amuncore.com/.well-known/oauth-protected-resource
+  status: 200
+- url: https://amuncore.com/mcp
+  status: 401
+  method: POST
+  note: >-
+    Returns WWW-Authenticate: Bearer
+    resource_metadata="https://amuncore.com/.well-known/oauth-protected-resource"

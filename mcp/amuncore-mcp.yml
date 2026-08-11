@@ -1,20 +1,67 @@
-generated: '2026-08-03'
+generated: '2026-08-10'
 method: probed
 status: published
 provider_published: true
 source: https://amuncore.com/mcp
-description: 'AmunCore is MCP-native by design: the REST endpoints a user builds over
-  their own database become tools an AI assistant can call, under the same keys, permissions
-  and audit trail. The MCP endpoint is live and token-gated — it answers JSON-RPC
-  with a well-formed error rather than an HTML page, which is a good sign of a real
-  implementation rather than a marketing route.'
-verified: '2026-08-03'
+docs: https://amuncore.com/llms.txt
+description: >-
+  AmunCore is MCP-native by design: the REST endpoints a user builds over their
+  own database become tools an AI assistant can call, under the same keys,
+  permissions and audit trail. The MCP endpoint is live and token-gated — it
+  answers JSON-RPC with a well-formed protocol error rather than an HTML page,
+  which is a good sign of a real implementation rather than a marketing route.
+  Since the first profiling round the provider has added RFC 9728 protected
+  resource metadata and a matching WWW-Authenticate challenge, so an agent can
+  now discover how to authorize without being told out of band.
+verified: '2026-08-10'
 server:
   name: amuncore
-  transport: http
+  transport: [http, stdio]
   url: https://amuncore.com/mcp
-  auth: MCP-Token header
+  auth: MCP-Token header, or OAuth 2.0 bearer token with the "mcp" scope
   deployment: vendor-hosted
+  scope_model: >-
+    One MCP configuration per company. Tools are scoped to the company that owns
+    the key, with the same tenant isolation and audit logging as the REST API.
+  transports_note: >-
+    llms.txt documents both a local stdio transport (for desktop assistants such
+    as Claude Desktop) and the HTTP transport probed here.
+authorization:
+  challenge: 'WWW-Authenticate: Bearer resource_metadata="https://amuncore.com/.well-known/oauth-protected-resource"'
+  protected_resource_metadata: https://amuncore.com/.well-known/oauth-protected-resource
+  authorization_server_metadata: https://amuncore.com/.well-known/oauth-authorization-server
+  scopes: [mcp]
+  detail: scopes/amuncore-scopes.yml
+tools_source: https://amuncore.com/llms.txt
+tools_schema_status: gated
+tools:
+- name: list_applications
+  description: List the applications in your account.
+- name: get_application
+  description: Get details of one application.
+- name: list_endpoints
+  description: List the endpoints of an application.
+- name: call_api
+  description: >-
+    Read or write data through any of your endpoints. The main data tool — this
+    is the generic passthrough onto the generated REST surface.
+- name: create_application
+  description: Create a new application.
+- name: create_endpoint
+  description: Create a new endpoint on an application.
+- name: toggle_endpoint
+  description: Enable or disable an endpoint.
+- name: regenerate_api_key
+  description: Rotate an application's API key.
+- name: get_audit_logs
+  description: Read the audit trail.
+- name: get_license_status
+  description: Check the current plan and license.
+- name: check_plan_limits
+  description: Check plan limits and current usage.
+- name: get_dashboard_stats
+  description: Get summary statistics.
+crosswalk: mcp/amuncore-tool-crosswalk.yml
 evidence:
 - url: https://amuncore.com/mcp
   status: 405
@@ -23,9 +70,19 @@ evidence:
 - url: https://amuncore.com/mcp
   status: 401
   method: POST
-  note: 'jsonrpc tools/list and initialize both returned {"jsonrpc":"2.0","error":{"code":-32001,"message":"Unauthorized:
-    missing MCP-Token header"}} — a correct JSON-RPC error, so the server is real
-    and simply requires a token.'
+  note: >-
+    jsonrpc tools/list returned
+    {"jsonrpc":"2.0","error":{"code":-32001,"message":"Unauthorized: missing
+    MCP-Token header"}} with a Bearer WWW-Authenticate header — a correct
+    JSON-RPC error, so the server is real and simply requires a token.
+- url: https://amuncore.com/llms.txt
+  status: 200
+  note: Provider-published tool list; the twelve names above are quoted from it verbatim.
 gaps:
-- Tool list not enumerable without a token, so the exposed tools are whatever endpoints
-  a given user has built — the surface is per-tenant by design rather than fixed.
+- Live tools/list is auth-gated, so the per-tool inputSchema could not be read.
+  The names and descriptions above come from the provider's own llms.txt; input
+  contracts require authenticated introspection.
+- The exposed data surface is per-tenant by design. Eleven of the twelve tools
+  are fixed platform-management tools, but call_api fans out to whatever
+  endpoints a given company has built, so the effective tool surface differs per
+  account.

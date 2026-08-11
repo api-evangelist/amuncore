@@ -1,0 +1,87 @@
+generated: '2026-08-10'
+method: searched
+source: >-
+  https://amuncore.com/openapi.json, https://amuncore.com/llms.txt,
+  https://amuncore.com/terms.html, https://amuncore.com/security.html
+description: >-
+  AmunCore versions its generated API in the URI path at v1 and nothing else about
+  its lifecycle is published. There is no changelog, no status page, no deprecation
+  policy and no numeric uptime commitment outside a negotiated Enterprise SLA. For
+  a platform whose whole value proposition is "we maintain the API layer so you
+  don't", the absence of a public change and status record is the most consequential
+  gap in this profile.
+versioning:
+  scheme: uri-path
+  current: v1
+  mechanism: The version segment in /api/v1/{appId}/{endpointName}
+  spec_version: v1
+  docs: https://amuncore.com/llms.txt
+  notes: >-
+    OpenAPI info.version is "v1", matching the path. No version header, no dated
+    versioning, and no statement about how a v2 would be introduced or how long v1
+    would run alongside it.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  notes: >-
+    No deprecation policy is published and no RFC 8594 Sunset or Deprecation header
+    support is documented. The terms of service reserve the right to change the
+    service but say nothing about notice periods for API changes.
+deprecated_operations: []
+sla:
+  url: https://amuncore.com/terms.html
+  public_uptime_target: null
+  notes: >-
+    Terms of Service §6 states availability is not guaranteed "unless covered by a
+    specific service-level agreement", and the pricing page lists "SLA guarantee"
+    as an Enterprise-tier feature. No number is published for any self-serve tier.
+    Self-hosted deployments run on the customer's own infrastructure, where
+    availability is explicitly the customer's responsibility.
+status_page: null
+changelog: null
+support:
+  channels:
+  - type: email
+    value: info@amuncore.com
+  - type: email
+    value: sales@amuncore.com
+    note: Sales and enterprise, including on-premises and security review.
+  - type: phone
+    value: '+20 100 516 5421'
+  - type: whatsapp
+    value: https://wa.me/201005165421
+  - type: help-center
+    value: https://amuncore.com/Help
+    access: customer-only
+    note: Returns the sign-in page to an anonymous visitor.
+  priority_support: Listed as a Pro-tier feature; dedicated support at Enterprise.
+company:
+  operator: HYNOWorld
+  site: https://hynoworld.com
+  note: >-
+    AmunCore API Engine is a product of HYNOWorld; the terms of service name
+    HYNOWorld as the operating entity.
+gaps:
+- No status page. Nothing at status.amuncore.com (DNS does not resolve) and no
+  status link anywhere on the site, so a consumer has no incident channel.
+- >-
+  No changelog. /changelog returns 404 and no release notes are published, so the
+  public OpenAPI can change under consumers without notice — and it has. The spec,
+  llms.txt and the OAuth metadata probed here on 2026-08-10 were all absent when
+  this provider was first profiled on 2026-08-03, and nothing announced them.
+- No deprecation policy and no Sunset/Deprecation header support.
+- No published uptime target for the self-serve tiers.
+evidence:
+- url: https://amuncore.com/openapi.json
+  status: 200
+- url: https://amuncore.com/changelog
+  status: 404
+- url: https://amuncore.com/terms.html
+  status: 200
+- url: https://amuncore.com/Help
+  status: 200
+  note: Serves the "Sign in · AmunCore" page rather than help content.
+- url: https://status.amuncore.com/
+  status: 0
+  note: DNS does not resolve.

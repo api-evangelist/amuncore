@@ -1,0 +1,100 @@
+generated: '2026-08-10'
+method: derived
+source: openapi/amuncore-dynamic-api-openapi.yml
+description: >-
+  Request and response examples extracted verbatim from the inline example blocks
+  the provider ships in its own OpenAPI, plus the one call pattern spelled out in
+  llms.txt. Every operation in the spec carries an example on every documented
+  response, which is unusually complete for a five-operation spec — nothing here is
+  authored by API Evangelist.
+examples:
+- operation: DynamicApi_GetList
+  method: GET
+  path: /api/v1/{appId}/{endpointName}
+  request:
+    curl: 'curl -H "X-Api-Key: YOUR_KEY" "https://amuncore.com/api/v1/myapp/customers?page=1&pageSize=50"'
+    source: https://amuncore.com/llms.txt
+  responses:
+  - status: 200
+    body:
+      success: true
+      page: 1
+      pageSize: 50
+      total: 2
+      data:
+      - id: 1
+        name: Acme Corp
+        email: hello@acme.com
+      - id: 2
+        name: Globex
+        email: info@globex.com
+  - status: 401
+    body:
+      success: false
+      error: UNAUTHORIZED
+      message: Invalid or missing API key
+      requestId: req_9f2c1a7b
+      timestamp: '2026-01-15T10:30:00Z'
+  - status: 429
+    body:
+      success: false
+      error: RATE_LIMITED
+      message: Monthly call quota exhausted
+      requestId: req_9f2c1a7b
+      timestamp: '2026-01-15T10:30:00Z'
+- operation: DynamicApi_GetById
+  method: GET
+  path: /api/v1/{appId}/{endpointName}/{id}
+  responses:
+  - status: 404
+    body:
+      success: false
+      error: NOT_FOUND
+      message: Application or endpoint not found
+      requestId: req_9f2c1a7b
+      timestamp: '2026-01-15T10:30:00Z'
+- operation: DynamicApi_Post
+  method: POST
+  path: /api/v1/{appId}/{endpointName}
+  request:
+    body:
+      FieldName: value
+      AnotherField: 0
+    note: >-
+      The body is an open JSON object whose keys are the columns the endpoint
+      exposes; the spec ships a placeholder because the real shape is per tenant.
+  responses:
+  - status: 201
+    body:
+      success: true
+      data:
+        id: 3
+        name: New Record
+  - status: 409
+    body:
+      success: false
+      error: CONFLICT
+      message: Conflict (for example a duplicate key)
+      requestId: req_9f2c1a7b
+      timestamp: '2026-01-15T10:30:00Z'
+  - status: 422
+    body:
+      success: false
+      error: VALIDATION_FAILED
+      message: Validation failed for the request body
+      requestId: req_9f2c1a7b
+      timestamp: '2026-01-15T10:30:00Z'
+observed:
+- description: >-
+    Live unauthenticated call on 2026-08-10 — the real error envelope, which is
+    thinner than the documented one (no error code, no requestId, no timestamp).
+  request: GET https://amuncore.com/api/v1/demo/customers
+  status: 404
+  body:
+    success: false
+    message: Application 'demo' not found or API key does not match.
+coverage:
+  operations_in_spec: 5
+  operations_with_examples: 5
+  responses_in_spec: 30
+  responses_with_examples: 30

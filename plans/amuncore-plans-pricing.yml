@@ -1,0 +1,107 @@
+generated: '2026-08-10'
+method: searched
+source: https://amuncore.com/#pricing
+provider: AmunCore
+providerId: amuncore
+description: >-
+  Four published tiers, freemium with a permanent free plan and a self-serve card
+  path into two flat monthly prices before an Enterprise "contact sales" step.
+  What is metered is unusual and worth reading carefully: the plan gates not only
+  call volume but WHICH DATABASE ENGINES you may connect — the free plan is SQL
+  Server only, Starter adds MySQL, and only Pro unlocks every supported engine.
+  AI/MCP access is likewise a paid feature, listed as available on Pro and marked
+  with a neutral dot rather than a tick on Free and Starter.
+currency: USD
+billing_period: month
+plan_count: 4
+plans:
+- id: amuncore-free
+  name: Free
+  price: 0
+  currency: USD
+  period: forever
+  self_serve: true
+  card_required: false
+  quota:
+    applications: 1
+    endpoints: 2
+    api_calls: 1000
+    api_calls_window: day
+  databases: [SQL Server]
+  features:
+    cors_ip_allowlist: not-included
+    ai_mcp: not-included
+  cta: Start free
+- id: amuncore-starter
+  name: Starter
+  price: 29
+  currency: USD
+  period: month
+  self_serve: true
+  quota:
+    applications: 3
+    endpoints: 20
+    api_calls: 100000
+    api_calls_window: month
+  databases: [SQL Server, MySQL]
+  features:
+    cors_ip_allowlist: not-included
+    ai_mcp: not-included
+  cta: Choose Starter
+- id: amuncore-pro
+  name: Pro
+  price: 99
+  currency: USD
+  period: month
+  self_serve: true
+  most_popular: true
+  quota:
+    applications: unlimited
+    endpoints: unlimited
+    api_calls: 5000000
+    api_calls_window: month
+  databases: [all supported engines]
+  features:
+    cors_ip_allowlist: included
+    ai_mcp: included
+    priority_support: included
+  cta: Choose Pro
+- id: amuncore-enterprise
+  name: Enterprise
+  price: null
+  price_label: Custom
+  currency: USD
+  period: negotiated
+  self_serve: false
+  contact: sales@amuncore.com
+  quota:
+    api_calls: unlimited
+  features:
+    everything_in_pro: included
+    dedicated_support: included
+    custom_branding: included
+    sla: included
+  deployment: >-
+    Self-hosted / on-premises licensing is handled here; the security page
+    recommends on-premises plus a joint security review for regulated deployments.
+  cta: Contact sales
+overage:
+  policy: hard-stop
+  note: >-
+    No overage rate is published. Exhausting the quota returns 429 RATE_LIMITED
+    with Retry-After rather than billing an excess, so the plan limit is a ceiling
+    and not a soft threshold.
+gaps:
+- Pricing is an on-page anchor (https://amuncore.com/#pricing) rather than its own
+  route — /pricing returns 404 — so there is no stable, linkable pricing URL and no
+  machine-readable price catalog.
+- Annual billing, currency options and taxes are not stated.
+- The Free and Starter rows mark "CORS / IP allowlist" and "AI / MCP" with a
+  neutral dot rather than a tick or a cross, so whether those are absent or merely
+  limited is ambiguous on the page itself.
+- No published trial on the paid tiers; the free plan is the trial.
+evidence:
+- url: https://amuncore.com/
+  status: 200
+- url: https://amuncore.com/pricing
+  status: 404

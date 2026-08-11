@@ -1,0 +1,116 @@
+generated: '2026-08-10'
+method: derived
+source: >-
+  mcp/amuncore-mcp.yml (tool names quoted from https://amuncore.com/llms.txt) and
+  openapi/amuncore-dynamic-api-openapi.yml (operationIds read from
+  https://amuncore.com/openapi.json)
+description: >-
+  AmunCore is an unusual crosswalk. Its public OpenAPI describes only the
+  GENERATED data plane — five CRUD operations over an arbitrary
+  {appId}/{endpointName} pair — while eleven of its twelve MCP tools operate on
+  the CONTROL plane (applications, endpoints, keys, audit logs, plan limits),
+  which has no published REST contract at all. The two surfaces therefore barely
+  overlap: a single MCP tool, call_api, carries the entire REST binding, and
+  everything else is MCP-only. That is a real surface divergence and is recorded
+  as such rather than papered over.
+surfaces:
+  openapi:
+    file: openapi/amuncore-dynamic-api-openapi.yml
+    source: https://amuncore.com/openapi.json
+    status: public
+    operations: 5
+    note: >-
+      The spec is public and unauthenticated; the operations it describes require
+      an X-Api-Key header.
+  mcp:
+    url: https://amuncore.com/mcp
+    status: gated
+    note: >-
+      tools/list returns 401 without an MCP-Token or OAuth bearer token, so tool
+      inputSchemas could not be read. Bindings below are mapped by name and by
+      the provider's own descriptions, and confidence is set accordingly.
+  graphql:
+    endpoint: null
+    status: absent-at-platform-root
+    note: >-
+      https://amuncore.com/security.html documents a GraphQL channel ("resolved by
+      application ID + API key together"), but /graphql, /api/graphql and
+      /api/v1/graphql all return 404 at the platform root — the GraphQL surface is
+      generated per tenant like the REST surface, not served centrally. No SDL
+      could be introspected and none is invented here.
+crosswalk:
+- tool: call_api
+  category: data-plane
+  rest:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+  binding: rest
+  confidence: high
+  note: >-
+    One-to-many fan-out. llms.txt calls call_api "the main data tool" for reading
+    or writing "through any of your endpoints", which is exactly the surface the
+    five published operations describe. Its real input contract is the union of
+    those operations' parameters — appId, endpointName, optional id, plus
+    page/pageSize/orderBy/orderDir and arbitrary column filters on reads, and a
+    free-form JSON object body on writes.
+mcp_only:
+- tool: list_applications
+  reason: >-
+    Control plane. Applications are created and listed in the dashboard; no public
+    REST operation for them appears in the published OpenAPI.
+- tool: get_application
+  reason: Control plane; no published REST operation.
+- tool: list_endpoints
+  reason: >-
+    Control plane. Endpoint definitions are configured visually; the OpenAPI
+    describes calling an endpoint, not enumerating them.
+- tool: create_application
+  reason: Control plane; provisioning has no published REST contract.
+- tool: create_endpoint
+  reason: >-
+    Control plane. This is the tool that makes AmunCore agent-interesting — an
+    assistant can manufacture a new API over a table — and it is exposed to MCP
+    without a REST equivalent in the public spec.
+- tool: toggle_endpoint
+  reason: Control plane; no published REST operation.
+- tool: regenerate_api_key
+  reason: >-
+    Credential management. High-consequence and MCP-reachable with no published
+    REST counterpart or documented confirmation step.
+- tool: get_audit_logs
+  reason: Observability; no published REST operation.
+- tool: get_license_status
+  reason: Billing/licensing; no published REST operation.
+- tool: check_plan_limits
+  reason: >-
+    Quota introspection; no published REST operation. This is the only
+    programmatic way to read remaining quota ahead of the 429 documented in the
+    spec.
+- tool: get_dashboard_stats
+  reason: Analytics; no published REST operation.
+rest_only:
+- capability: Fine-grained CRUD verbs
+  operations:
+  - DynamicApi_GetList
+  - DynamicApi_GetById
+  - DynamicApi_Post
+  - DynamicApi_Put
+  - DynamicApi_Delete
+  note: >-
+    Not truly REST-only — call_api reaches all five — but each is a distinct
+    operationId in the spec while MCP collapses them into one generic tool, so an
+    agent loses the verb-level affordance (and the per-verb response codes) unless
+    it reads the OpenAPI alongside tools/list.
+coverage:
+  tools_named: 12
+  tools_bound_to_rest: 1
+  mcp_only: 11
+  rest_operations_total: 5
+  rest_operations_with_a_tool: 5
+  note: >-
+    100% of published REST operations are reachable from MCP, but only 8% of MCP
+    tools have a published REST contract. The control plane is agent-reachable and
+    contract-less.
