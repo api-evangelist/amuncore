@@ -14,7 +14,7 @@ description: 'AmunCore turns a database into a secure REST API without writing a
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/amuncore.png
 created: '2026-08-03'
 modified: '2026-08-10'
-specificationVersion: '0.21'
+specificationVersion: '0.23'
 type: Index
 position: Producing
 access: 3rd-Party
