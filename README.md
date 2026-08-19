@@ -1,76 +1,112 @@
-# AmunCore
+# AmunCore (amuncore)
 
-Turn any database into a secure REST API — no code, no backend project. Connect a database, pick
-tables, and endpoints go live with routing, authentication, validation, pagination, joins, errors,
-logs and docs already handled.
+AmunCore turns a database into a secure REST API without writing a backend. You connect a database, pick tables, and endpoints go live with routing, authentication, validation, pagination, joins, errors, logs and docs already handled — the layer between a database and HTTP that would otherwise be a two-to-six-week project. It supports SQL Server, MySQL, MariaDB, PostgreSQL, Oracle and SQLite, with a visual builder that is the same regardless of the engine underneath. It is MCP-native by design: the endpoints you build become tools an AI assistant can call under the same keys, permissions and audit trail, and the MCP endpoint is live, token-gated and now fronted by RFC 8414/9728 OAuth discovery. A public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header. Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a free plan forever, and paid tiers from $29/mo.
 
-- **Website:** https://amuncore.com
-- **API reference:** https://amuncore.com/swagger — public Swagger UI, no sign-in
-- **OpenAPI:** https://amuncore.com/openapi.json — OpenAPI 3.0.1, 5 operations
-- **MCP:** https://amuncore.com/mcp — live, token-gated, OAuth-discoverable
-- **Databases:** SQL Server, MySQL, MariaDB, PostgreSQL, Oracle, SQLite
-- **Operator:** HYNOWorld, Alexandria, Egypt
+**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/amuncore/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/amuncore/refs/heads/main/apis.yml)
 
-Part of the [API Evangelist](https://apievangelist.com) network. First profiled 2026-08-03,
-re-probed and enriched 2026-08-10; every surface was fetched — see `X-Discovery` and `X-Reprobe`
-in `apis.yml`.
+## Scope
 
-## What changed between the two passes
+- **Type:** Index
+- **Position:** Producing
+- **Access:** 3rd-Party
 
-This is the interesting part of the profile. On 2026-08-03 the OpenAPI, `llms.txt` and both OAuth
-discovery documents all returned 404. On 2026-08-10 all four return 200. **AmunCore went from a
-marketing site with a real MCP endpoint to a fully contract-bearing provider in seven days** — and
-published none of it, because there is no changelog and no status page to publish it in.
+## Tags
 
-## Why it is interesting
+- Database
+- API Management
+- Backend
+- No Code
+- SQL
+- PostgreSQL
+- MySQL
+- Oracle
+- MCP
+- Agents
+- Data
+- SQL Server
+- Webhooks
+- OpenAPI
+- Low Code
+- Egypt
 
-**MCP-native by design, and the implementation is real.** `GET /mcp` returns 405; `POST` with
-JSON-RPC returns a correct protocol error and now a proper auth challenge:
+## Timestamps
 
-```
-HTTP/2 401
-www-authenticate: Bearer resource_metadata="https://amuncore.com/.well-known/oauth-protected-resource"
+- **Created:** 2026-08-03
+- **Modified:** 2026-08-10
 
-{"jsonrpc":"2.0","error":{"code":-32001,"message":"Unauthorized: missing MCP-Token header"}}
-```
+## APIs
 
-That is a working server with discoverable authorization — RFC 8414 and RFC 9728 metadata, PKCE
-`S256`, RFC 7591 dynamic client registration — not a marketing route. Its control path
-(`/zzz-control-nonsense`) correctly 404s, so probes against this host are trustworthy.
+### AmunCore API
 
-**The agent surface builds APIs; it does not only call them.** Eleven of the twelve published MCP
-tools are control-plane — `create_application`, `create_endpoint`, `toggle_endpoint`,
-`regenerate_api_key`, `get_audit_logs`. Only `call_api` maps onto the public REST contract. An
-assistant here can manufacture a new HTTP API over a database table. See
-`mcp/amuncore-tool-crosswalk.yml` for the full binding, and
-`skills/amuncore-expose-a-table-over-mcp.md` for the consequence classes that implies.
+Generated REST API over a connected database — full CRUD across chosen tables, with auth, pagination and docs handled by the platform.
 
-It is also a neat inversion of the usual catalog entry: most providers publish an API, whereas this
-one **manufactures** APIs, per tenant, from databases that previously had none. That is why
-`components.schemas` in its OpenAPI is empty — the record shape is unknowable until a customer
-configures it.
+- **Human URL:** [https://amuncore.com](https://amuncore.com)
+- **Base URL:** `https://amuncore.com`
 
-## Gaps worth naming
+#### Tags
 
-- **No changelog, no status page, no deprecation policy.** For a platform whose value proposition is
-  "we maintain the API layer so you don't", there is no public change or incident record at all.
-  `lifecycle/amuncore-lifecycle.yml`.
-- **No idempotency.** No key header, no replay semantics. A retried `POST` inserts twice.
-  `conventions/amuncore-conventions.yml`.
-- **No test mode and no sandbox.** Writes go to the customer's live database; keys are `ak_live_`
-  with no test counterpart. `sandbox/amuncore-sandbox.yml`.
-- **No SDKs in any registry.** Eleven registry lookups, all 404 — the developer story is generated
-  code snippets, not a versioned client. `packages/amuncore-packages.yml`.
-- **No `security.txt` and no vulnerability-disclosure route.** The security page is good and
-  unusually honest, but a researcher has nowhere to report.
-  `security/amuncore-trust-center.yml`.
-- **No A2A agent card**, at either the canonical or the legacy well-known path.
-- **Help centre is customer-only** — `/Help` serves the sign-in page. `llms.txt` is the public
-  documentation.
+- Database
+- REST
+- No Code
+- MCP
 
-## Credit where due
+#### Properties
 
-The security page carries an explicitly labelled **"Honest roadmap"** stating that independent
-penetration testing, ISO 27001 alignment, SSO and SIEM export are *not yet implemented*. Publishing
-what you have not built is rarer than publishing what you have, and it is the reason this profile
-claims no certifications on their behalf.
+- [Website](https://amuncore.com)
+- [Documentation](https://amuncore.com/swagger)
+- [OpenAPI](openapi/amuncore-dynamic-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Postman Collection](collections/amuncore-dynamic-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/amuncore-dynamic-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Examples](examples/amuncore-dynamic-api-examples.yml)
+- [Overlay](overlays/amuncore-dynamic-api-overlay.yaml)
+- [Authentication](authentication/amuncore-authentication.yml)
+- [O Auth Scopes](scopes/amuncore-scopes.yml)
+- [Conventions](conventions/amuncore-conventions.yml)
+- [Error Catalog](errors/amuncore-problem-types.yml)
+- [Rate Limits](rate-limits/amuncore-rate-limits.yml)
+- [Data Model](data-model/amuncore-data-model.yml)
+- [M C P Server](mcp/amuncore-mcp.yml)
+- [Tool Crosswalk](mcp/amuncore-tool-crosswalk.yml)
+- [Webhooks](asyncapi/amuncore-webhooks.yml)
+- [Plans](plans/amuncore-plans-pricing.yml)
+
+## Common Properties
+
+- [Agentic Access](agentic-access/amuncore-agentic-access.yml)
+- [Domain Security](security/amuncore-domain-security.yml)
+- [Website](https://amuncore.com)
+- [Documentation](https://amuncore.com/swagger)
+- [L L Ms Txt](https://amuncore.com/llms.txt)
+- [OpenAPI](openapi/amuncore-dynamic-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Examples](examples/amuncore-dynamic-api-examples.yml)
+- [Overlay](overlays/amuncore-dynamic-api-overlay.yaml)
+- [L L Ms Txt](llms/amuncore-llms.txt)
+- [Well Known](well-known/amuncore-well-known.yml)
+- [M C P Server](mcp/amuncore-mcp.yml)
+- [Tool Crosswalk](mcp/amuncore-tool-crosswalk.yml)
+- [Agent Skill](skills/_index.yml)
+- [Authentication](authentication/amuncore-authentication.yml)
+- [O Auth Scopes](scopes/amuncore-scopes.yml)
+- [Conventions](conventions/amuncore-conventions.yml)
+- [Error Catalog](errors/amuncore-problem-types.yml)
+- [Rate Limits](rate-limits/amuncore-rate-limits.yml)
+- [Lifecycle](lifecycle/amuncore-lifecycle.yml)
+- [Data Model](data-model/amuncore-data-model.yml)
+- [Conformance](conformance/amuncore-conformance.yml)
+- [Trust Center](security/amuncore-trust-center.yml)
+- [Sandbox](sandbox/amuncore-sandbox.yml)
+- [Webhooks](asyncapi/amuncore-webhooks.yml)
+- [Packages](packages/amuncore-packages.yml)
+- [Plans](plans/amuncore-plans-pricing.yml)
+- [Pricing](https://amuncore.com/#pricing)
+- [Sign Up](https://amuncore.com/Register)
+- [Login](https://amuncore.com/Auth/Login)
+- [Terms of Service](https://amuncore.com/terms.html)
+- [Privacy Policy](https://amuncore.com/privacy.html)
+- [Support](https://amuncore.com/#contact)
+- [About](https://amuncore.com/about.html)
+
+## Maintainers
+
+**FN:** Kin Lane
+**Email:** kin@apievangelist.com

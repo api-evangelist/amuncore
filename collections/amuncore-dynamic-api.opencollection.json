@@ -1,0 +1,237 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AmunCore API Engine: Dynamic API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Api-Key",
+      "value": "{{X-Api-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Dynamic API",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "GET: fetch all records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://amuncore.com/api/v1/:appId/:endpointName",
+            "headers": [
+              {
+                "name": "X-Api-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Application AppId"
+              },
+              {
+                "name": "endpointName",
+                "value": "",
+                "type": "path",
+                "description": "Endpoint name"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number (1-based)"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query",
+                "description": "Records per page (max 500)"
+              },
+              {
+                "name": "orderBy",
+                "value": "",
+                "type": "query",
+                "description": "Column to sort by"
+              },
+              {
+                "name": "orderDir",
+                "value": "",
+                "type": "query",
+                "description": "ASC or DESC"
+              },
+              {
+                "name": "fieldName",
+                "value": "",
+                "type": "query",
+                "description": "Filter: ?FieldName=value (replace with actual column name)"
+              }
+            ]
+          },
+          "docs": "GET: fetch all records"
+        },
+        {
+          "info": {
+            "name": "POST: insert a new record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://amuncore.com/api/v1/:appId/:endpointName",
+            "headers": [
+              {
+                "name": "X-Api-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Application AppId"
+              },
+              {
+                "name": "endpointName",
+                "value": "",
+                "type": "path",
+                "description": "Endpoint name"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "POST: insert a new record"
+        },
+        {
+          "info": {
+            "name": "GET: fetch a single record by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://amuncore.com/api/v1/:appId/:endpointName/:id",
+            "headers": [
+              {
+                "name": "X-Api-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Application AppId"
+              },
+              {
+                "name": "endpointName",
+                "value": "",
+                "type": "path",
+                "description": "Endpoint name"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Record primary key value"
+              }
+            ]
+          },
+          "docs": "GET: fetch a single record by ID"
+        },
+        {
+          "info": {
+            "name": "PUT: update a record by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://amuncore.com/api/v1/:appId/:endpointName/:id",
+            "headers": [
+              {
+                "name": "X-Api-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Application AppId"
+              },
+              {
+                "name": "endpointName",
+                "value": "",
+                "type": "path",
+                "description": "Endpoint name"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Record primary key value"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "PUT: update a record by ID"
+        },
+        {
+          "info": {
+            "name": "DELETE: remove a record by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://amuncore.com/api/v1/:appId/:endpointName/:id",
+            "headers": [
+              {
+                "name": "X-Api-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Application AppId"
+              },
+              {
+                "name": "endpointName",
+                "value": "",
+                "type": "path",
+                "description": "Endpoint name"
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Record primary key value"
+              }
+            ]
+          },
+          "docs": "DELETE: remove a record by ID"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
