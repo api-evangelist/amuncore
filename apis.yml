@@ -23,6 +23,23 @@ tags:
 - Database
 - API Management
 - Backend
+- No-Code
+- SQL
+- PostgreSQL
+- MySQL
+- Oracle
+- MCP
+- Agents
+- Data
+- SQL Server
+- Webhook
+- OpenAPI
+- Low-Code
+- Egypt
+tags_raw:
+- Database
+- API Management
+- Backend
 - No Code
 - SQL
 - PostgreSQL
@@ -45,6 +62,11 @@ apis:
   humanURL: https://amuncore.com
   baseURL: https://amuncore.com
   tags:
+  - Database
+  - REST
+  - No-Code
+  - MCP
+  tags_raw:
   - Database
   - REST
   - No Code
