@@ -54,55 +54,46 @@ tags_raw:
 - Low Code
 - Egypt
 apis:
-- aid: amuncore:amuncore-api
-  name: AmunCore API
-  description: Generated REST API over a connected database — full CRUD across chosen tables, with auth,
-    pagination and docs handled by the platform.
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: amuncore:amuncore-dynamic-api-api
+  name: AmunCore Dynamic API
+  description: >-
+    Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.
   humanURL: https://amuncore.com
   baseURL: https://amuncore.com
   tags:
-  - Database
-  - REST
-  - No-Code
-  - MCP
-  tags_raw:
-  - Database
-  - REST
-  - No Code
-  - MCP
+  - Dynamic API
   properties:
-  - url: https://amuncore.com
-    type: Website
-  - url: https://amuncore.com/swagger
-    type: Documentation
-  - url: openapi/amuncore-dynamic-api-openapi.yml
-    type: OpenAPI
-  - url: examples/amuncore-dynamic-api-examples.yml
-    type: Examples
-  - url: overlays/amuncore-dynamic-api-overlay.yaml
-    type: Overlay
-  - url: authentication/amuncore-authentication.yml
-    type: Authentication
-  - url: scopes/amuncore-scopes.yml
-    type: OAuthScopes
-  - url: conventions/amuncore-conventions.yml
-    type: Conventions
-  - url: errors/amuncore-problem-types.yml
-    type: ErrorCatalog
-  - url: rate-limits/amuncore-rate-limits.yml
-    type: RateLimits
-  - url: data-model/amuncore-data-model.yml
-    type: DataModel
-  - url: mcp/amuncore-mcp.yml
-    type: MCPServer
-  - url: mcp/amuncore-tool-crosswalk.yml
-    type: ToolCrosswalk
-  - url: asyncapi/amuncore-webhooks.yml
-    type: Webhooks
-  - url: plans/amuncore-plans-pricing.yml
-    type: Plans
+  - type: OpenAPI
+    url: openapi/amuncore-dynamic-api-api-openapi.yml
+  - type: Website
+    url: https://amuncore.com
+  - type: Documentation
+    url: https://amuncore.com/swagger
+  - type: Examples
+    url: examples/amuncore-dynamic-api-examples.yml
+  - type: Authentication
+    url: authentication/amuncore-authentication.yml
+  - type: OAuthScopes
+    url: scopes/amuncore-scopes.yml
+  - type: Conventions
+    url: conventions/amuncore-conventions.yml
+  - type: ErrorCatalog
+    url: errors/amuncore-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/amuncore-rate-limits.yml
+  - type: DataModel
+    url: data-model/amuncore-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/amuncore-tool-crosswalk.yml
+  - type: Webhooks
+    url: asyncapi/amuncore-webhooks.yml
+  - type: Plans
+    url: plans/amuncore-plans-pricing.yml
 common:
+- type: Overlay
+  url: overlays/amuncore-dynamic-api-overlay.yaml
+- type: MCPServer
+  url: mcp/amuncore-mcp.yml
 - type: AgenticAccess
   url: agentic-access/amuncore-agentic-access.yml
 - type: DomainSecurity
