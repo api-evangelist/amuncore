@@ -11,6 +11,18 @@ description: 'AmunCore turns a database into a secure REST API without writing a
   A public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header.
   Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a
   free plan forever, and paid tiers from $29/mo.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/amuncore.png
 created: '2026-08-03'
 modified: '2026-08-10'
