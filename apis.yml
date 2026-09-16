@@ -7,10 +7,10 @@ description: 'AmunCore turns a database into a secure REST API without writing a
   be a two-to-six-week project. It supports SQL Server, MySQL, MariaDB, PostgreSQL, Oracle and SQLite,
   with a visual builder that is the same regardless of the engine underneath. It is MCP-native by design:
   the endpoints you build become tools an AI assistant can call under the same keys, permissions and audit
-  trail, and the MCP endpoint is live, token-gated and now fronted by RFC 8414/9728 OAuth discovery.
-  A public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header.
-  Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a
-  free plan forever, and paid tiers from $29/mo.'
+  trail, and the MCP endpoint is live, token-gated and now fronted by RFC 8414/9728 OAuth discovery. A
+  public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header.
+  Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a free
+  plan forever, and paid tiers from $29/mo.'
 deliveryModel:
   model: saas
   open_source: false
@@ -42,7 +42,7 @@ accessModel:
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/amuncore.png
 created: '2026-08-03'
-modified: '2026-08-10'
+modified: '2026-09-16'
 specificationVersion: '0.23'
 type: Index
 position: Producing
@@ -85,8 +85,7 @@ tags_raw:
 apis:
 - aid: amuncore:amuncore-dynamic-api-api
   name: AmunCore Dynamic API
-  description: >-
-    Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.
+  description: Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.
   humanURL: https://amuncore.com
   baseURL: https://amuncore.com
   tags:
@@ -133,7 +132,7 @@ common:
   type: Documentation
 - url: https://amuncore.com/llms.txt
   type: LLMsTxt
-- url: openapi/amuncore-dynamic-api-openapi.yml
+- url: openapi/_original/amuncore-dynamic-api-openapi.yml
   type: OpenAPI
 - url: examples/amuncore-dynamic-api-examples.yml
   type: Examples
@@ -212,9 +211,9 @@ X-Discovery:
     url: https://amuncore.com/openapi.json
     http_status: 404
     real: false
-    note: 'SUPERSEDED — see the 2026-08-10 re-probe below. On 2026-08-03 none was published for the platform
+    note: SUPERSEDED — see the 2026-08-10 re-probe below. On 2026-08-03 none was published for the platform
       itself. Note the product GENERATES APIs per tenant, so a platform-level spec is a different thing
-      from the specs it produces.'
+      from the specs it produces.
   - surface: LlmsTxt
     url: https://amuncore.com/llms.txt
     http_status: 404
@@ -228,12 +227,11 @@ X-Discovery:
 X-Reprobe:
   date: '2026-08-10'
   method: probed
-  note: >-
-    Re-probed on the second enrichment pass. AmunCore shipped a machine-readable contract surface in
-    the seven days after first profiling: the OpenAPI, llms.txt and both OAuth discovery documents were
-    all 404 on 2026-08-03 and are all 200 now. The 2026-08-03 findings above are kept for the record and
-    marked SUPERSEDED rather than rewritten. Note this also means the provider changed its public contract
-    with no changelog and no status page to announce it.
+  note: 'Re-probed on the second enrichment pass. AmunCore shipped a machine-readable contract surface
+    in the seven days after first profiling: the OpenAPI, llms.txt and both OAuth discovery documents
+    were all 404 on 2026-08-03 and are all 200 now. The 2026-08-03 findings above are kept for the record
+    and marked SUPERSEDED rather than rewritten. Note this also means the provider changed its public
+    contract with no changelog and no status page to announce it.'
   findings:
   - surface: OpenAPI
     url: https://amuncore.com/openapi.json
