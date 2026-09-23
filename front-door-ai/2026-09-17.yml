@@ -1,0 +1,30 @@
+# Front Door AI Index — amuncore — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: amuncore
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: amuncore.com
+  final_host: amuncore.com
+  ownership: own
+  owner: amuncore
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 36
+  host_score: 36
+  density: 25.48
+  words: 1413
+  tiers:
+    agentic: 20
+    core: 16
+    model: 0
+  ambiguous: 2
+  top_terms:
+    AI: 16
+    MCP: 12
+    AI assistant: 5
+    AI agent: 2
+    agent: 2
+    model context protocol: 1

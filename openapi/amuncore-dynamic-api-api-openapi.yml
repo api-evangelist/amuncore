@@ -1,22 +1,7 @@
 openapi: 3.2.0
 info:
   title: 'AmunCore API Engine: Dynamic Dynamic API'
-  description: 'Turn any database into a secure REST API. Register an application, pick the tables and columns to expose, and call your data over HTTP with an API key.
-
-
-    **Authentication:** send your API key in the `X-Api-Key` header on every request.
-
-
-    **Base route:** `GET /api/v1/{appId}/{endpointName}` returns a list, `GET /api/v1/{appId}/{endpointName}/{id}` returns a single record. POST creates, PUT updates, DELETE removes (when the endpoint allows it).
-
-
-    **Errors:** all errors return a consistent JSON shape with `success`, `message`, and where relevant `error`, `requestId`, and `timestamp`. See the ErrorResponse schema.
-
-
-    **Rate limits:** responses may include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`. A `429` means the monthly call quota is exhausted.
-
-
-    This specification is public; the endpoints themselves still require a valid API key.'
+  description: Turn any database into a secure REST API.
   contact:
     name: AmunCore
     url: https://amuncore.com

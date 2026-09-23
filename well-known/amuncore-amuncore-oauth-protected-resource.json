@@ -1,0 +1,1 @@
+{"resource":"https://amuncore.com/mcp","authorization_servers":["https://amuncore.com"],"scopes_supported":["mcp"],"bearer_methods_supported":["header"],"resource_documentation":"https://amuncore.com/llms.txt"}
