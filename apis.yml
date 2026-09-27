@@ -87,7 +87,6 @@ apis:
   name: AmunCore Dynamic API
   description: Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.
   humanURL: https://amuncore.com
-  baseURL: https://amuncore.com
   tags:
   - Dynamic API
   properties:
