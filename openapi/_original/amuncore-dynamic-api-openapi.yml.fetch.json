@@ -1,0 +1,12 @@
+{
+ "url": "https://amuncore.com/openapi.json",
+ "requested_url": "https://amuncore.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json; charset=utf-8",
+ "bytes": 26446,
+ "sha256": "717862b0e656dfcea8e56d6b03360dba46758288b6188e522da5a0afc4ae399e",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
