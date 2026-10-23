@@ -592,3 +592,9 @@ components:
       description: Your application's API key. Sent on every request as the X-Api-Key header. A missing or invalid key returns 401.
       name: X-Api-Key
       in: header
+x-provenance:
+  method: harvested
+  publisher: AmunCore
+  source: https://amuncore.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
