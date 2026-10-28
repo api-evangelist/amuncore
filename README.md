@@ -1,4 +1,4 @@
-# AmunCore (amuncore)
+# AmunCore
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,111 +66,140 @@
 
 AmunCore turns a database into a secure REST API without writing a backend. You connect a database, pick tables, and endpoints go live with routing, authentication, validation, pagination, joins, errors, logs and docs already handled — the layer between a database and HTTP that would otherwise be a two-to-six-week project. It supports SQL Server, MySQL, MariaDB, PostgreSQL, Oracle and SQLite, with a visual builder that is the same regardless of the engine underneath. It is MCP-native by design: the endpoints you build become tools an AI assistant can call under the same keys, permissions and audit trail, and the MCP endpoint is live, token-gated and now fronted by RFC 8414/9728 OAuth discovery. A public OpenAPI 3.0.1 describes the five generated CRUD operations; REST auth is an X-Api-Key header. Built and operated by HYNOWorld, with a self-hosted option for regulated deployments. Full CRUD, a free plan forever, and paid tiers from $29/mo.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/amuncore/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/amuncore/refs/heads/main/apis.yml)
+**Areas:** Database · API Management · Backend · No-Code · SQL · PostgreSQL · MySQL · Oracle · MCP · Agents · Data · SQL Server
 
-## Scope
+## AmunCore on APIs.io
 
-- **Type:** Index
-- **Position:** Producing
-- **Access:** 3rd-Party
+Everything profiled for AmunCore is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/amuncore/](https://apis.io/providers/amuncore/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (1)
 
-- Database
-- API Management
-- Backend
-- No Code
-- SQL
-- PostgreSQL
-- MySQL
-- Oracle
-- MCP
-- Agents
-- Data
-- SQL Server
-- Webhooks
-- OpenAPI
-- Low Code
-- Egypt
+- [AmunCore Dynamic API](https://apis.io/apis/amuncore/amuncore-dynamic-api-api/) — Generated CRUD over a table or view exposed as an endpoint on a registered AmunCore application.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-08-03
-- **Modified:** 2026-08-10
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (1)
 
-### AmunCore API
+Event-driven and webhook contracts.
 
-Generated REST API over a connected database — full CRUD across chosen tables, with auth, pagination and docs handled by the platform.
+- [Amuncore Webhooks](https://apis.io/asyncapis/amuncore/amuncore-webhooks/)
 
-- **Human URL:** [https://amuncore.com](https://amuncore.com)
-- **Base URL:** `https://amuncore.com`
+#### MCP servers (1)
 
-#### Tags
+Model Context Protocol servers that expose the API to agents.
 
-- Database
-- REST
-- No Code
-- MCP
+- [amuncore](https://apis.io/servers/amuncore/amuncore/)
 
-#### Properties
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Amuncore Agentic Access](https://apis.io/agentic-access/amuncore/amuncore-agentic-access/)
+
+#### Collections (1)
+
+Postman and Open Collection request collections.
+
+- [AmunCore API Engine: Dynamic API](https://apis.io/collections/amuncore/open-amuncore-dynamic-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Amuncore Dynamic Api Overlay](https://apis.io/overlays/amuncore/amuncore-dynamic-api-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Amuncore Authentication](https://apis.io/security/amuncore/amuncore-authentication/)
+- [Amuncore Domain Security](https://apis.io/security/amuncore/amuncore-domain-security/)
+- [Amuncore Trust Center](https://apis.io/security/amuncore/amuncore-trust-center/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Amuncore Scopes](https://apis.io/scopes/amuncore/amuncore-scopes/)
+
+#### Plans and pricing (2)
+
+Published plans, tiers and prices.
+
+- [Amuncore Plans](https://apis.io/plans/amuncore/amuncore-plans/)
+- [Amuncore Plans Pricing](https://apis.io/plans/amuncore/amuncore-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Amuncore Rate Limits](https://apis.io/rate-limits/amuncore/amuncore-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://amuncore.com)
 - [Documentation](https://amuncore.com/swagger)
-- [OpenAPI](openapi/amuncore-dynamic-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/amuncore-dynamic-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/amuncore-dynamic-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-- [Examples](examples/amuncore-dynamic-api-examples.yml)
-- [Overlay](overlays/amuncore-dynamic-api-overlay.yaml)
-- [Authentication](authentication/amuncore-authentication.yml)
-- [O Auth Scopes](scopes/amuncore-scopes.yml)
-- [Conventions](conventions/amuncore-conventions.yml)
-- [Error Catalog](errors/amuncore-problem-types.yml)
-- [Rate Limits](rate-limits/amuncore-rate-limits.yml)
-- [Data Model](data-model/amuncore-data-model.yml)
-- [M C P Server](mcp/amuncore-mcp.yml)
-- [Tool Crosswalk](mcp/amuncore-tool-crosswalk.yml)
-- [Webhooks](asyncapi/amuncore-webhooks.yml)
-- [Plans](plans/amuncore-plans-pricing.yml)
-
-## Common Properties
-
-- [Agentic Access](agentic-access/amuncore-agentic-access.yml)
-- [Domain Security](security/amuncore-domain-security.yml)
-- [Website](https://amuncore.com)
-- [Documentation](https://amuncore.com/swagger)
-- [L L Ms Txt](https://amuncore.com/llms.txt)
-- [OpenAPI](openapi/amuncore-dynamic-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Examples](examples/amuncore-dynamic-api-examples.yml)
-- [Overlay](overlays/amuncore-dynamic-api-overlay.yaml)
-- [L L Ms Txt](llms/amuncore-llms.txt)
-- [Well Known](well-known/amuncore-well-known.yml)
-- [M C P Server](mcp/amuncore-mcp.yml)
-- [Tool Crosswalk](mcp/amuncore-tool-crosswalk.yml)
-- [Agent Skill](skills/_index.yml)
-- [Authentication](authentication/amuncore-authentication.yml)
-- [O Auth Scopes](scopes/amuncore-scopes.yml)
-- [Conventions](conventions/amuncore-conventions.yml)
-- [Error Catalog](errors/amuncore-problem-types.yml)
-- [Rate Limits](rate-limits/amuncore-rate-limits.yml)
-- [Lifecycle](lifecycle/amuncore-lifecycle.yml)
-- [Data Model](data-model/amuncore-data-model.yml)
-- [Conformance](conformance/amuncore-conformance.yml)
-- [Trust Center](security/amuncore-trust-center.yml)
-- [Sandbox](sandbox/amuncore-sandbox.yml)
-- [Webhooks](asyncapi/amuncore-webhooks.yml)
-- [Packages](packages/amuncore-packages.yml)
-- [Plans](plans/amuncore-plans-pricing.yml)
 - [Pricing](https://amuncore.com/#pricing)
-- [Sign Up](https://amuncore.com/Register)
-- [Login](https://amuncore.com/Auth/Login)
-- [Terms of Service](https://amuncore.com/terms.html)
-- [Privacy Policy](https://amuncore.com/privacy.html)
+- [Sign up](https://amuncore.com/Register)
 - [Support](https://amuncore.com/#contact)
-- [About](https://amuncore.com/about.html)
+- [Terms of service](https://amuncore.com/terms.html)
+- [Privacy policy](https://amuncore.com/privacy.html)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 54.9** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.7 |
+| Contract quality | 56.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 39.5 |
+| Developer ergonomics | 35.1 |
+| Access clarity | 84.2 |
+
+**Agent readiness 56.5** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 39.2** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/amuncore/](https://apis.io/providers/amuncore/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for AmunCore: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/amuncore/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
